@@ -4,7 +4,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { cn } from '$lib/utils.js';
-	import Google from '$lib/icons/google.svelte';
+	import Google from '$lib/icons/Google.svelte';
 
 	let className: string | undefined | null = undefined;
 	export { className as class };
