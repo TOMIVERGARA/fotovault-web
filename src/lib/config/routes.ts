@@ -1,18 +1,17 @@
 import {
     LayoutDashboard,
-    ShoppingCart,
-    Package,
-    UsersRound,
+    Ruler,
+    Factory,
+    FlaskConical,
     ChartLine,
     Settings
 } from 'lucide-svelte';
 
 const routes = [
     { path: '/app', name: 'Dashboard', icon: LayoutDashboard },
-    { path: '/products', name: 'Products', icon: Package },
-    { path: '/orders', name: 'Orders', icon: ShoppingCart },
-    { path: '/customers', name: 'Customers', icon: UsersRound },
-    { path: '/analytics', name: 'Analytics', icon: ChartLine },
+    { path: '/app/brands', name: 'Brands & Film Stocks', icon: Factory },
+    { path: '/types-and-formats', name: 'Film Types & Formats', icon: Ruler },
+    { path: '/mylab', name: 'My Lab', icon: FlaskConical },
     { path: '/settings', name: 'Settings', icon: Settings },
 ];
 
