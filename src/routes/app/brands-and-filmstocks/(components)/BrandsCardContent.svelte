@@ -18,7 +18,12 @@
 		>
 			<div class="flex-1 space-y-1">
 				<p class="text-sm font-medium leading-none">{brand.name}</p>
-				<p class="text-sm text-muted-foreground">0 filmstocks.</p>
+				<p class="text-sm text-muted-foreground">
+					{brand.filmstock_amount} filmstock{brand.filmstock_amount > 1 ||
+					brand.filmstock_amount == 0
+						? 's'
+						: ''}
+				</p>
 			</div>
 			<ChevronRight />
 		</div>

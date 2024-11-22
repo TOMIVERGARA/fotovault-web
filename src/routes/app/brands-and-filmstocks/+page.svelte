@@ -5,42 +5,19 @@
 	import ScrollableContainer from '$lib/components/custom/ScrollableContainer.svelte';
 	import { Plus } from 'lucide-svelte';
 
-	// Importamos el nuevo componente reutilizable
 	import CreateRecordDialog from '$lib/components/custom/CreateRecordDialog.svelte';
 	import { buttonVariants } from '$lib/components/ui/button';
 	import type { Database } from '$lib/types/supabase.types';
+	import FilmStocksCardContent from './(components)/FilmStocksCardContent.svelte';
 
 	const { data } = $props<{ data: PageData }>();
 
-	let isNewBrandDialogOpen = $state(false);
 	let { brands } = $state(data);
-	let scrollableContainer: HTMLDivElement;
-	let showScrollIcon = $state(false);
-	let isHovered = $state(false);
+	let isNewBrandDialogOpen = $state(false);
 	let selectedBrand: Database['public']['Tables']['brand']['Row'] | null = $state(null);
 
 	$effect(() => {
 		brands = data.brands;
-
-		const checkScrollable = () => {
-			showScrollIcon = scrollableContainer.scrollHeight > scrollableContainer.clientHeight;
-		};
-
-		const handleScroll = () => {
-			const isAtBottom =
-				scrollableContainer.scrollHeight - scrollableContainer.scrollTop ===
-				scrollableContainer.clientHeight;
-			showScrollIcon = !isAtBottom && isHovered;
-		};
-
-		checkScrollable();
-		scrollableContainer.addEventListener('scroll', handleScroll);
-		window.addEventListener('resize', checkScrollable);
-
-		return () => {
-			scrollableContainer.removeEventListener('scroll', handleScroll);
-			window.removeEventListener('resize', checkScrollable);
-		};
 	});
 </script>
 
@@ -86,7 +63,16 @@
 			</Card.Title>
 			<Card.Description>Organize your film catalog for a specific brand.</Card.Description>
 		</Card.Header>
-		<Card.Content></Card.Content>
+		<Card.Content class="h-[71vh]">
+			{#if selectedBrand}
+				<FilmStocksCardContent {selectedBrand} />
+			{:else}
+				<div class="flex h-full w-full flex-col items-center justify-center">
+					<img class="w-2/5 select-none" src="/img/illustrations/reading.png" alt="" srcset="" />
+					<p class="">Select a brand to see its associated filmstocks.</p>
+				</div>
+			{/if}
+		</Card.Content>
 	</Card.Root>
 </div>
 

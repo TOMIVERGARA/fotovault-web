@@ -38,18 +38,21 @@ export type Database = {
         Row: {
           active: boolean | null
           created_at: string
+          filmstock_amount: number | null
           id: string
           name: string
         }
         Insert: {
           active?: boolean | null
           created_at?: string
+          filmstock_amount?: number | null
           id?: string
           name: string
         }
         Update: {
           active?: boolean | null
           created_at?: string
+          filmstock_amount?: number | null
           id?: string
           name?: string
         }
@@ -133,11 +136,32 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "filmstock_brand_fkey"
+            columns: ["brand"]
+            isOneToOne: false
+            referencedRelation: "filmstock_with_details"
+            referencedColumns: ["brand_id"]
+          },
+          {
+            foreignKeyName: "filmstock_filmtype_fkey"
+            columns: ["filmtype"]
+            isOneToOne: false
+            referencedRelation: "filmstock_with_details"
+            referencedColumns: ["filmtype_id"]
+          },
+          {
             foreignKeyName: "filmstock_filmtype_fkey"
             columns: ["filmtype"]
             isOneToOne: false
             referencedRelation: "filmtype"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filmstock_format_fkey"
+            columns: ["format"]
+            isOneToOne: false
+            referencedRelation: "filmstock_with_details"
+            referencedColumns: ["format_id"]
           },
           {
             foreignKeyName: "filmstock_format_fkey"
@@ -154,18 +178,21 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          user_id: string | null
         }
         Insert: {
           active?: boolean | null
           created_at?: string
           id?: string
           name: string
+          user_id?: string | null
         }
         Update: {
           active?: boolean | null
           created_at?: string
           id?: string
           name?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -173,25 +200,28 @@ export type Database = {
         Row: {
           active: boolean | null
           created_at: string
-          heigth: number
+          height: number
           id: string
           name: string
+          user_id: string | null
           width: number
         }
         Insert: {
           active?: boolean | null
           created_at?: string
-          heigth: number
+          height: number
           id?: string
           name: string
+          user_id?: string | null
           width: number
         }
         Update: {
           active?: boolean | null
           created_at?: string
-          heigth?: number
+          height?: number
           id?: string
           name?: string
+          user_id?: string | null
           width?: number
         }
         Relationships: []
@@ -237,6 +267,13 @@ export type Database = {
           lab_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "lab_filmtype_filmtype_id_fkey"
+            columns: ["filmtype_id"]
+            isOneToOne: false
+            referencedRelation: "filmstock_with_details"
+            referencedColumns: ["filmtype_id"]
+          },
           {
             foreignKeyName: "lab_filmtype_filmtype_id_fkey"
             columns: ["filmtype_id"]
@@ -335,6 +372,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "roll_filmstock_id_fkey"
+            columns: ["filmstock_id"]
+            isOneToOne: false
+            referencedRelation: "filmstock_with_details"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "roll_scan_detail_id_fkey"
             columns: ["scan_detail_id"]
             isOneToOne: false
@@ -401,7 +445,22 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      filmstock_with_details: {
+        Row: {
+          active: boolean | null
+          brand_id: string | null
+          brand_name: string | null
+          filmtype_id: string | null
+          filmtype_name: string | null
+          format_id: string | null
+          format_name: string | null
+          id: string | null
+          iso: Database["public"]["Enums"]["iso_values"] | null
+          name: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

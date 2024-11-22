@@ -11,6 +11,7 @@ export const load: PageServerLoad = async ({ locals, depends }) => {
     const { data: brands, error } = await supabase
         .from('brand')
         .select('*')
+        .order('name', { ascending: true })
         .returns<Tables<"brand">>();
 
     if (error) {
