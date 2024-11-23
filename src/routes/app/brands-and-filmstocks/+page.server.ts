@@ -4,26 +4,30 @@ import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 
 
-export const load: PageServerLoad = async ({ locals, depends }) => {
+export const load: PageServerLoad = async ({ fetch, depends }) => {
     depends('brands');
-    const { supabase } = locals;
 
-    const { data: brands, error } = await supabase
-        .from('brand')
-        .select('*')
-        .order('name', { ascending: true })
-        .returns<Tables<"brand">>();
+    try {
+        const response = await fetch('/api/brands');
 
-    if (error) {
+        if (!response.ok) {
+            console.error('Error fetching brands');
+            return {
+                brands: []
+            };
+        }
+
+        const brands = await response.json();
+
+        return {
+            brands
+        };
+    } catch (error) {
         console.error('Error:', error);
         return {
             brands: []
         };
     }
-
-    return {
-        brands
-    };
 };
 
 export const actions = {

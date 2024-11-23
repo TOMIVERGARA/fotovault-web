@@ -2,40 +2,45 @@ import type { Tables } from "$lib/types/supabase.types";
 import type { PageServerLoad, Actions } from "./$types";
 import { fail } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ locals, depends }) => {
+export const load: PageServerLoad = async ({ fetch, depends }) => {
     depends('filmtypes');
-    const { supabase } = locals;
 
-    // Fetch film types
-    const { data: filmtypes, error: filmtypesError } = await supabase
-        .from('filmtype')
-        .select('*')
-        .returns<Tables<'filmtype'>>();
+    try {
+        // Fetch data from both endpoints in parallel
+        const [filmTypesRes, formatsRes] = await Promise.all([
+            fetch('/api/filmtypes'),
+            fetch('/api/formats')
+        ]);
 
-    // Fetch formats
-    const { data: formats, error: formatsError } = await supabase
-        .from('format')
-        .select('*')
-        .returns<Tables<'format'>>()
-        .order('active', { ascending: true }) // Active types first
-        .order('name', { ascending: true }); // Then alphabetically
+        // Check if responses are ok
+        if (!filmTypesRes.ok || !formatsRes.ok) {
+            const errorMessage = !filmTypesRes.ok
+                ? 'Error fetching film types.'
+                : 'Error fetching formats.';
 
-    // Handle errors
-    if (filmtypesError || formatsError) {
-        const errorMessage = filmtypesError ? 'Error fetching film types.' : 'Error fetching formats.';
-        console.error(errorMessage, filmtypesError || formatsError);
+            return {
+                filmtypes: [],
+                formats: [],
+                error: errorMessage
+            };
+        }
+
+        // Parse JSON responses
+        const filmtypes = await filmTypesRes.json();
+        const formats = await formatsRes.json();
+
+        return {
+            filmtypes,
+            formats
+        };
+    } catch (error) {
+        console.error('Error fetching data:', error);
         return {
             filmtypes: [],
             formats: [],
-            error: errorMessage
+            error: 'Error fetching data'
         };
     }
-
-    // Return data
-    return {
-        filmtypes,
-        formats
-    };
 };
 
 export const actions = {
