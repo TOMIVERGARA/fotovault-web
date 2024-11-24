@@ -91,14 +91,24 @@
 
 <form method="POST" use:enhance class="space-y-6" enctype="multipart/form-data">
 	<fieldset disabled={$submitting} class="space-y-6">
-		<Form.Field {form} name="name">
-			<Form.Control let:attrs>
-				<Form.Label>filmstock name</Form.Label>
-				<Input {...attrs} bind:value={$formData.name} />
-			</Form.Control>
-			<Form.Description class="text-xs">enter the name of the film stock.</Form.Description>
-			<Form.FieldErrors />
-		</Form.Field>
+		<div class="flex gap-4">
+			<Form.Field {form} name="name" class="w-3/4">
+				<Form.Control let:attrs>
+					<Form.Label>filmstock name</Form.Label>
+					<Input {...attrs} placeholder="Portra" bind:value={$formData.name} />
+				</Form.Control>
+				<Form.Description class="text-xs">enter the name of the film stock.</Form.Description>
+				<Form.FieldErrors />
+			</Form.Field>
+			<Form.Field {form} name="iso" class="">
+				<Form.Control let:attrs>
+					<Form.Label>iso</Form.Label>
+					<Input {...attrs} type="number" placeholder="160" bind:value={$formData.iso} />
+				</Form.Control>
+				<Form.Description class="text-xs">enter the iso value.</Form.Description>
+				<Form.FieldErrors />
+			</Form.Field>
+		</div>
 
 		<Form.Field {form} name="brandId">
 			<Form.Control let:attrs>
@@ -113,7 +123,7 @@
 				>
 					<Select.Input name={attrs.name} />
 					<Select.Trigger {...attrs}>
-						<Select.Value placeholder="Select a brand" />
+						<Select.Value placeholder="select a brand" />
 					</Select.Trigger>
 					<Select.Content>
 						{#each brands as brand}
@@ -140,7 +150,7 @@
 					>
 						<Select.Input name={attrs.name} />
 						<Select.Trigger {...attrs}>
-							<Select.Value placeholder="Select a format" />
+							<Select.Value placeholder="select a format" />
 						</Select.Trigger>
 						<Select.Content>
 							{#each formats as format}
@@ -166,7 +176,7 @@
 					>
 						<Select.Input name={attrs.name} />
 						<Select.Trigger {...attrs}>
-							<Select.Value placeholder="Select a film type" />
+							<Select.Value placeholder="select a film type" />
 						</Select.Trigger>
 						<Select.Content>
 							{#each filmTypes as filmType}
@@ -181,17 +191,24 @@
 		</div>
 		<Form.Field {form} name="image">
 			<Form.Control let:attrs>
-				<Form.Label>Logo</Form.Label>
+				<Form.Label
+					>film box/cartridge logo <span class="font-normal text-zinc-500">(optional)</span
+					></Form.Label
+				>
 				<div class="flex items-center gap-4">
 					<label
-						class="flex h-32 w-32 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed hover:bg-gray-50 dark:hover:bg-gray-800"
+						class="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed hover:bg-gray-50 dark:hover:bg-gray-800"
 					>
 						{#if imagePreview}
-							<img src={imagePreview} alt="Preview" class="h-full w-full rounded-lg object-cover" />
+							<img
+								src={imagePreview}
+								alt="Preview"
+								class="h-full w-full rounded-lg object-contain p-2"
+							/>
 						{:else}
 							<div class="flex flex-col items-center justify-center pb-6 pt-5">
 								<ImagePlus class="mb-2 h-8 w-8 text-gray-500" />
-								<p class="text-xs text-gray-500 dark:text-gray-400">Click to upload</p>
+								<p class="text-xs text-gray-500 dark:text-gray-400">click to upload</p>
 							</div>
 						{/if}
 						<input
@@ -199,13 +216,16 @@
 							type="file"
 							accept="image/*"
 							class="hidden"
-							on:change={handleImageChange}
+							onchange={handleImageChange}
 						/>
 					</label>
 				</div>
 			</Form.Control>
 			<Form.Description class="text-xs"
-				>Upload a logo for the film stock (optional).</Form.Description
+				>Upload a logo for the film stock: <i
+					>you can pick a box or a cartridge image to help you more easily recognize the film.</i
+				> You should try to use PNGs with a transparent background for best results. If you don't upload
+				an image, a generic film logo will be used.</Form.Description
 			>
 			<Form.FieldErrors />
 		</Form.Field>

@@ -90,6 +90,7 @@ export const actions: Actions = {
                     format: formDataWithoutImage.formatId,
                     filmtype: formDataWithoutImage.filmTypeId,
                     name: formDataWithoutImage.name,
+                    iso: formDataWithoutImage.iso,
                     logo_url: imageUrl
                 },
             ])
