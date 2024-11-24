@@ -75,7 +75,7 @@
 
 			<Dialog.Footer>
 				<Button type="submit" disabled={loading}>
-					{loading ? 'Creating...' : 'Save'}
+					{loading ? 'Creating...' : 'save'}
 				</Button>
 			</Dialog.Footer>
 		</form>
