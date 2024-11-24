@@ -41,6 +41,7 @@ export type Database = {
           filmstock_amount: number | null
           id: string
           name: string
+          user_id: string | null
         }
         Insert: {
           active?: boolean | null
@@ -48,6 +49,7 @@ export type Database = {
           filmstock_amount?: number | null
           id?: string
           name: string
+          user_id?: string | null
         }
         Update: {
           active?: boolean | null
@@ -55,6 +57,7 @@ export type Database = {
           filmstock_amount?: number | null
           id?: string
           name?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -101,7 +104,8 @@ export type Database = {
           filmtype: string
           format: string
           id: string
-          iso: Database["public"]["Enums"]["iso_values"] | null
+          iso: number | null
+          logo_url: string | null
           name: string
           user_id: string
         }
@@ -112,7 +116,8 @@ export type Database = {
           filmtype: string
           format: string
           id?: string
-          iso?: Database["public"]["Enums"]["iso_values"] | null
+          iso?: number | null
+          logo_url?: string | null
           name: string
           user_id?: string
         }
@@ -123,7 +128,8 @@ export type Database = {
           filmtype?: string
           format?: string
           id?: string
-          iso?: Database["public"]["Enums"]["iso_values"] | null
+          iso?: number | null
+          logo_url?: string | null
           name?: string
           user_id?: string
         }
@@ -146,22 +152,8 @@ export type Database = {
             foreignKeyName: "filmstock_filmtype_fkey"
             columns: ["filmtype"]
             isOneToOne: false
-            referencedRelation: "filmstock_with_details"
-            referencedColumns: ["filmtype_id"]
-          },
-          {
-            foreignKeyName: "filmstock_filmtype_fkey"
-            columns: ["filmtype"]
-            isOneToOne: false
             referencedRelation: "filmtype"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "filmstock_format_fkey"
-            columns: ["format"]
-            isOneToOne: false
-            referencedRelation: "filmstock_with_details"
-            referencedColumns: ["format_id"]
           },
           {
             foreignKeyName: "filmstock_format_fkey"
@@ -267,13 +259,6 @@ export type Database = {
           lab_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "lab_filmtype_filmtype_id_fkey"
-            columns: ["filmtype_id"]
-            isOneToOne: false
-            referencedRelation: "filmstock_with_details"
-            referencedColumns: ["filmtype_id"]
-          },
           {
             foreignKeyName: "lab_filmtype_filmtype_id_fkey"
             columns: ["filmtype_id"]
@@ -450,12 +435,11 @@ export type Database = {
           active: boolean | null
           brand_id: string | null
           brand_name: string | null
-          filmtype_id: string | null
           filmtype_name: string | null
-          format_id: string | null
           format_name: string | null
           id: string | null
-          iso: Database["public"]["Enums"]["iso_values"] | null
+          iso: number | null
+          logo_url: string | null
           name: string | null
           user_id: string | null
         }
