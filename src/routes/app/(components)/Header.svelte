@@ -1,11 +1,10 @@
-<script>
+<script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
 	import Breadcrumbs from './Breadcrumbs.svelte';
-	import { toast } from 'svelte-sonner';
+	import * as Avatar from '$lib/components/ui/avatar';
 
-	const { userAvatarUrl } = $props();
+	const { userAvatarUrl, userDisplayName } = $props();
 
 	async function handleLogout() {
 		const response = await fetch('/api/logout', {
@@ -22,8 +21,6 @@
 			alert('Error al cerrar sesión');
 		}
 	}
-
-	$inspect(userAvatarUrl);
 </script>
 
 <header
@@ -40,13 +37,17 @@
 				class="overflow-hidden rounded-full"
 				builders={[builder]}
 			>
-				<img
-					src={userAvatarUrl}
-					width={36}
-					height={36}
-					alt="Avatar"
-					class="overflow-hidden rounded-full"
-				/>
+				<Avatar.Root>
+					<Avatar.Image src={userAvatarUrl} alt="@shadcn" />
+					<Avatar.Fallback
+						>{userDisplayName
+							.trim()
+							.split(/\s+/)
+							.slice(0, 2)
+							.map((name: string) => name[0].toUpperCase())
+							.join('')}</Avatar.Fallback
+					>
+				</Avatar.Root>
 			</Button>
 		</DropdownMenu.Trigger>
 		<DropdownMenu.Content align="end">
