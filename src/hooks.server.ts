@@ -70,7 +70,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
     const baseUrl = event.url.origin;
 
     if (!event.locals.session && event.url.pathname.startsWith('/app')) {
-        return Response.redirect(`${baseUrl}/auth`, 303)
+        return Response.redirect(`${baseUrl}/auth/login`, 303)
     }
 
     if (event.locals.session && event.url.pathname.startsWith('/auth')) {
