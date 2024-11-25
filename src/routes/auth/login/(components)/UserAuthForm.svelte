@@ -5,14 +5,15 @@
 	import { cn } from '$lib/utils.js';
 	import Google from '$lib/icons/Google.svelte';
 	import { toast } from 'svelte-sonner';
-	import { enhance } from '$app/forms';
 
 	let className: string | undefined | null = undefined;
 	export { className as class };
 
 	let isLoading = false;
 	let isOtpSent = false;
+	let isFirstTimeUser = false;
 	let email = '';
+	let name = '';
 	let otpAttempts = 0;
 	let canResendOtp = false;
 	let resendTimer = 30;
@@ -33,13 +34,14 @@
 
 			if (response.ok) {
 				isOtpSent = true;
+				isFirstTimeUser = data.isNewUser;
 				startResendTimer();
-				toast.success('login code sent to your email 📧');
+				toast.success('Login code sent to your email 📧');
 			} else {
-				toast.error(data.error || 'failed to send login code. please try again 🤷‍♂️');
+				toast.error(data.error || 'Failed to send login code. Please try again 🤷‍♂️');
 			}
 		} catch (error) {
-			toast.error('an unexpected error occurred. please try again 🤷‍♂️');
+			toast.error('An unexpected error occurred. Please try again 🤷‍♂️');
 		} finally {
 			isLoading = false;
 		}
@@ -51,6 +53,11 @@
 		const form = event.target as HTMLFormElement;
 		const formData = new FormData(form);
 		formData.append('email', email);
+
+		// Si es un usuario nuevo, agregamos el nombre
+		if (isFirstTimeUser) {
+			formData.append('name', name);
+		}
 
 		try {
 			const response = await fetch('/auth/login/email/verify', {
@@ -67,14 +74,14 @@
 				otpAttempts++;
 
 				if (otpAttempts >= 3) {
-					toast.error('too many failed attempts. please request a new code 🤬');
+					toast.error('Too many failed attempts. Please request a new code 🤬');
 					canResendOtp = true;
 				} else {
-					toast.error(data.error || 'invalid code. please try again 🫠');
+					toast.error(data.error || 'Invalid code. Please try again 🫠');
 				}
 			}
 		} catch (error) {
-			toast.error('an unexpected error occurred. please try again 🤷‍♂️');
+			toast.error('An unexpected error occurred. Please try again 🤷‍♂️');
 		} finally {
 			isLoading = false;
 		}
@@ -100,6 +107,9 @@
 
 	function resetForm() {
 		isOtpSent = false;
+		isFirstTimeUser = false;
+		email = '';
+		name = '';
 		otpAttempts = 0;
 		canResendOtp = false;
 		resendTimer = 30;
@@ -136,6 +146,20 @@
 	{:else}
 		<form on:submit|preventDefault={handleOtpSubmit}>
 			<div class="grid gap-2">
+				{#if isFirstTimeUser}
+					<div class="grid gap-1">
+						<Label class="sr-only" for="name">Name</Label>
+						<Input
+							id="name"
+							name="name"
+							bind:value={name}
+							placeholder="Enter your name"
+							type="text"
+							disabled={isLoading}
+							required
+						/>
+					</div>
+				{/if}
 				<p class="text-center text-sm text-muted-foreground">
 					We've sent a login code to <strong>{email}</strong>
 				</p>
@@ -157,7 +181,7 @@
 					{#if isLoading}
 						<span class="mr-2">Loading...</span>
 					{/if}
-					Verify Code
+					{isFirstTimeUser ? 'Complete Registration' : 'Verify Code'}
 				</Button>
 
 				<div class="flex flex-col gap-2 text-center">
