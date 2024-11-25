@@ -3,8 +3,27 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
 	import Breadcrumbs from './Breadcrumbs.svelte';
+	import { toast } from 'svelte-sonner';
 
 	const { userAvatarUrl } = $props();
+
+	async function handleLogout() {
+		const response = await fetch('/api/logout', {
+			method: 'POST'
+		});
+
+		const result = await response.json();
+
+		if (result.success) {
+			// Redirigir al usuario después de cerrar sesión
+			window.location.href = '/';
+		} else {
+			console.error('Error:', result.error);
+			alert('Error al cerrar sesión');
+		}
+	}
+
+	$inspect(userAvatarUrl);
 </script>
 
 <header
@@ -36,7 +55,7 @@
 			<DropdownMenu.Item>Settings</DropdownMenu.Item>
 			<DropdownMenu.Item>Support</DropdownMenu.Item>
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item>Logout</DropdownMenu.Item>
+			<DropdownMenu.Item onclick={handleLogout}>Logout</DropdownMenu.Item>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 </header>
