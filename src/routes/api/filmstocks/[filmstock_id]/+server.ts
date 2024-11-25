@@ -3,7 +3,6 @@ import type { RequestHandler } from '@sveltejs/kit';
 
 export const PATCH: RequestHandler = async ({ params, request, locals: { supabase } }) => {
     const { active } = await request.json();
-    console.log(params.filmstock_id);
 
     const { data, error } = await supabase
         .from('filmstock')

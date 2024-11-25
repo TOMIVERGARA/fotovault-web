@@ -56,8 +56,6 @@
 			fetchFilmstocks();
 		}
 	});
-
-	$inspect(filmstocks);
 </script>
 
 {#if filmstocks.length === 0}
