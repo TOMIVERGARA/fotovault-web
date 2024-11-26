@@ -1,6 +1,8 @@
 <script>
 	import LightDarkMode from './LightDarkMode.svelte';
 	import { mode } from 'mode-watcher';
+	import { page } from '$app/stores';
+	import UserProfile from '$lib/components/custom/UserProfile.svelte';
 </script>
 
 <header class="sticky top-0 z-10 items-center border-b bg-background">
@@ -26,7 +28,11 @@
 			>
 		</nav>
 		<div class="flex w-auto items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-			<LightDarkMode />
+			{#if $page.data.session}
+				<UserProfile />
+			{:else}
+				<LightDarkMode />
+			{/if}
 		</div>
 	</div>
 </header>
