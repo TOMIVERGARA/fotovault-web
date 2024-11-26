@@ -1,6 +1,7 @@
 <script>
 	import '../app.css';
 	import { invalidate } from '$app/navigation';
+	import { ModeWatcher } from 'mode-watcher';
 
 	const { data: propsData, children } = $props();
 	const { supabase, session } = propsData;
@@ -16,4 +17,5 @@
 	});
 </script>
 
+<ModeWatcher />
 {@render children()}
