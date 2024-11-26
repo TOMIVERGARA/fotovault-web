@@ -36,12 +36,12 @@
 				isOtpSent = true;
 				isFirstTimeUser = data.isNewUser;
 				startResendTimer();
-				toast.success('Login code sent to your email 📧');
+				toast.success('login code sent to your email 📧');
 			} else {
-				toast.error(data.error || 'Failed to send login code. Please try again 🤷‍♂️');
+				toast.error(data.error || 'failed to send login code. Please try again 🤷‍♂️');
 			}
 		} catch (error) {
-			toast.error('An unexpected error occurred. Please try again 🤷‍♂️');
+			toast.error('an unexpected error occurred. Please try again 🤷‍♂️');
 		} finally {
 			isLoading = false;
 		}
@@ -68,20 +68,20 @@
 			const data = await response.json();
 
 			if (response.ok) {
-				toast.success('Login successful');
+				toast.success('login successful ✅');
 				window.location.href = '/app';
 			} else {
 				otpAttempts++;
 
 				if (otpAttempts >= 3) {
-					toast.error('Too many failed attempts. Please request a new code 🤬');
+					toast.error('too many failed attempts. please request a new code 🤬');
 					canResendOtp = true;
 				} else {
-					toast.error(data.error || 'Invalid code. Please try again 🫠');
+					toast.error(data.error || 'invalid code. please try again 🫠');
 				}
 			}
 		} catch (error) {
-			toast.error('An unexpected error occurred. Please try again 🤷‍♂️');
+			toast.error('an unexpected error occurred. please try again 🤷‍♂️');
 		} finally {
 			isLoading = false;
 		}
@@ -121,6 +121,7 @@
 		<form on:submit|preventDefault={handleEmailSubmit}>
 			<div class="grid gap-2">
 				<div class="grid gap-1">
+					<p class="text-sm text-muted-foreground">enter your email</p>
 					<Label class="sr-only" for="email">Email</Label>
 					<Input
 						id="email"
@@ -139,36 +140,39 @@
 					{#if isLoading}
 						<span class="mr-2">Loading...</span>
 					{/if}
-					Send Login Code
+					send login code
 				</Button>
+				<p class="text-xs text-muted-foreground">
+					* if you don't have an account yet a new one will be created.
+				</p>
 			</div>
 		</form>
 	{:else}
 		<form on:submit|preventDefault={handleOtpSubmit}>
 			<div class="grid gap-2">
+				<p class="text-center text-sm text-muted-foreground">
+					We've sent a login code to <strong>{email}</strong>
+				</p>
 				{#if isFirstTimeUser}
 					<div class="grid gap-1">
-						<Label class="sr-only" for="name">Name</Label>
+						<Label class="sr-only" for="name">name</Label>
 						<Input
 							id="name"
 							name="name"
 							bind:value={name}
-							placeholder="Enter your name"
+							placeholder="enter your name"
 							type="text"
 							disabled={isLoading}
 							required
 						/>
 					</div>
 				{/if}
-				<p class="text-center text-sm text-muted-foreground">
-					We've sent a login code to <strong>{email}</strong>
-				</p>
 				<div class="grid gap-1">
-					<Label class="sr-only" for="otp">Enter Code</Label>
+					<Label class="sr-only" for="otp">enter code</Label>
 					<Input
 						id="otp"
 						name="otp"
-						placeholder="Enter the code sent to your email"
+						placeholder="enter the code sent to your email"
 						type="text"
 						inputmode="numeric"
 						pattern="[0-9]*"
@@ -177,47 +181,76 @@
 						required
 					/>
 				</div>
-				<Button type="submit" disabled={isLoading || (otpAttempts >= 3 && !canResendOtp)}>
-					{#if isLoading}
-						<span class="mr-2">Loading...</span>
-					{/if}
-					{isFirstTimeUser ? 'Complete Registration' : 'Verify Code'}
-				</Button>
+				{#if !canResendOtp && resendTimer > 0}
+					<p class="mb-2 text-xs italic text-muted-foreground">
+						you can request a new code in {resendTimer} seconds
+					</p>
+				{/if}
 
-				<div class="flex flex-col gap-2 text-center">
-					{#if !canResendOtp && resendTimer > 0}
-						<p class="text-sm text-muted-foreground">
-							You can request a new code in {resendTimer} seconds
-						</p>
-					{:else if otpAttempts > 0}
+				<div class="flex w-full gap-2">
+					{#if otpAttempts > 0}
+						<Button
+							type="submit"
+							class="w-1/2"
+							disabled={isLoading || (otpAttempts >= 3 && !canResendOtp)}
+						>
+							{#if isLoading}
+								<span class="mr-2">loading...</span>
+							{/if}
+							{isFirstTimeUser ? 'complete registration' : 'verify code'}
+						</Button>
+
 						<Button
 							type="button"
-							variant="ghost"
-							class="text-sm"
+							variant="outline"
+							class="w-1/2 text-sm"
 							on:click={handleResendOtp}
 							disabled={isLoading || !canResendOtp}
 						>
-							Request new code
+							request new code
+						</Button>
+					{:else}
+						<Button
+							type="submit"
+							class="w-full"
+							disabled={isLoading || (otpAttempts >= 3 && !canResendOtp)}
+						>
+							{#if isLoading}
+								<span class="mr-2">loading...</span>
+							{/if}
+							{isFirstTimeUser ? 'complete registration' : 'verify code'}
 						</Button>
 					{/if}
-					<Button type="button" variant="outline" class="mt-2" on:click={resetForm}>
-						Use Different Email
+				</div>
+				<div class="relative mt-4">
+					<div class="absolute inset-0 flex items-center">
+						<span class="w-full border-t" />
+					</div>
+					<div class="relative flex justify-center text-xs uppercase">
+						<span class="bg-background px-2 text-muted-foreground"> Or</span>
+					</div>
+				</div>
+
+				<div class="flex flex-col gap-2 text-center">
+					<Button type="button" variant="link" class="" on:click={resetForm}>
+						use a different email
 					</Button>
 				</div>
 			</div>
 		</form>
 	{/if}
-
-	<div class="relative">
-		<div class="absolute inset-0 flex items-center">
-			<span class="w-full border-t" />
+	{#if !isOtpSent}
+		<div class="relative">
+			<div class="absolute inset-0 flex items-center">
+				<span class="w-full border-t" />
+			</div>
+			<div class="relative flex justify-center text-xs uppercase">
+				<span class="bg-background px-2 text-muted-foreground"> Or continue with </span>
+			</div>
 		</div>
-		<div class="relative flex justify-center text-xs uppercase">
-			<span class="bg-background px-2 text-muted-foreground"> Or continue with </span>
-		</div>
-	</div>
-	<Button variant="outline" class="w-full" href="/auth/login/google">
-		<Google class="mr-2 w-3" />
-		Google
-	</Button>
+		<Button variant="outline" class="w-full" href="/auth/login/google">
+			<Google class="mr-2 w-3" />
+			Google
+		</Button>
+	{/if}
 </div>
