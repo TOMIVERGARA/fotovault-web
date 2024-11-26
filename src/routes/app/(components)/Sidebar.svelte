@@ -1,14 +1,5 @@
 <!-- src/lib/components/Sidebar.svelte -->
 <script lang="ts">
-	import {
-		Package2,
-		House,
-		ShoppingCart,
-		Package,
-		UsersRound,
-		ChartLine,
-		Settings
-	} from 'lucide-svelte/icons';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { routes } from '$lib/config/routes.js';
 </script>
@@ -21,7 +12,6 @@
 			class="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
 		>
 			<img src="/img/iso-img.svg" alt="Logo" class="!bg-white" />
-			<span class="sr-only">Acme Inc</span>
 		</a>
 
 		<!-- Enlaces dinámicos -->
