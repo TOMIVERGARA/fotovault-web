@@ -4,7 +4,12 @@
 	import { CircleArrowDown } from 'lucide-svelte';
 
 	// Props
-	let { children, containerClass = '', bottomShadowPos = 5, showScrollIndicator = true } = $props();
+	let {
+		children,
+		containerClass = '',
+		bottomShadowPos = 'bottom-5',
+		showScrollIndicator = true
+	} = $props();
 
 	let scrollableContainer: HTMLDivElement;
 	let showScrollIcon = $state(false);
@@ -53,7 +58,9 @@
 	});
 </script>
 
-<div class="absolute inset-x-0 top-0 z-10 h-8 bg-gradient-to-b from-white to-transparent"></div>
+<div
+	class="absolute inset-x-0 top-0 z-10 h-8 bg-gradient-to-b from-white to-transparent dark:from-zinc-950"
+></div>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
@@ -66,14 +73,14 @@
 </div>
 
 <div
-	class="absolute inset-x-0 bottom-{bottomShadowPos} z-10 h-8 bg-gradient-to-t from-white to-transparent"
+	class="absolute inset-x-0 {bottomShadowPos} z-10 h-8 bg-gradient-to-t from-white to-transparent dark:from-zinc-950"
 ></div>
 
 {#if showScrollIcon && isHovered && !isAtBottom}
 	<div
-		class="drop-in absolute inset-x-0 bottom-0 z-20 mx-auto mb-5 flex w-fit justify-center rounded-full bg-black p-1 opacity-20"
+		class="drop-in absolute inset-x-0 bottom-0 z-20 mx-auto mb-5 flex w-fit justify-center rounded-full bg-black p-1 opacity-20 dark:bg-white"
 	>
-		<CircleArrowDown class="w-6 text-white" />
+		<CircleArrowDown class="w-6 text-white dark:text-black" />
 	</div>
 {/if}
 

@@ -60,7 +60,18 @@
 
 {#if filmstocks.length === 0}
 	<div class="flex h-full w-full flex-col items-center justify-center">
-		<img class="w-2/5 select-none" src="/img/illustrations/add.png" alt="" srcset="" />
+		<img
+			class="hidden w-2/5 select-none dark:block"
+			src="/img/illustrations/add-white-img.png"
+			alt=""
+			srcset=""
+		/>
+		<img
+			class="w-2/5 select-none dark:hidden"
+			src="/img/illustrations/add-black-img.png"
+			alt=""
+			srcset=""
+		/>
 		<p class="text-center">
 			this brand doesnt own any filmstock. <br /><a
 				class="font-medium underline underline-offset-2"

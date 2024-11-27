@@ -49,7 +49,7 @@
 			</div>
 		</Card.Header>
 		<Card.Content class="relative flex-1 overflow-hidden">
-			<ScrollableContainer containerClass="h-full">
+			<ScrollableContainer containerClass="h-full" bottomShadowPos={'bottom-6'}>
 				<BrandsCardContent {brands} bind:selectedBrand />
 			</ScrollableContainer>
 		</Card.Content>
@@ -80,7 +80,18 @@
 				<FilmStocksCardContent {selectedBrand} />
 			{:else}
 				<div class="flex h-full w-full flex-col items-center justify-center">
-					<img class="w-2/5 select-none" src="/img/illustrations/reading.png" alt="" srcset="" />
+					<img
+						class="hidden w-2/5 select-none dark:block"
+						src="/img/illustrations/loading-white-img.png"
+						alt=""
+						srcset=""
+					/>
+					<img
+						class="w-2/5 select-none dark:hidden"
+						src="/img/illustrations/loading-black-img.png"
+						alt=""
+						srcset=""
+					/>
 					<p class="">select a brand to see its associated filmstocks.</p>
 				</div>
 			{/if}

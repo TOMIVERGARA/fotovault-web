@@ -1,24 +1,24 @@
 <div class="flex h-[99vh] w-full items-center justify-center !overflow-hidden">
-	<div class="prose relative">
+	<div class="prose relative text-primary">
 		<div class="container flex items-center justify-center">
 			<div class="glitch" data-text="404">404</div>
 			<div class="glow">404</div>
 		</div>
 		<div class="scanlines"></div>
 		<div class="content relative z-10">
-			<h1 class="text-center">Lost in the Multiverse?</h1>
+			<h1 class="text-center text-primary">Lost in the Multiverse?</h1>
 			<p>
-				oh no, Variant! you've slipped out of the Sacred Timeline™ and landed in a void where this
+				oh no, variant! you've slipped out of the Sacred Timeline™ and landed in a void where this
 				page doesn't exist. somewhere in the multiverse, the version you're looking for might be
 				real—but not here.
 			</p>
-			<h3>what can you do now?</h3>
+			<h3 class="text-primary">what can you do now?</h3>
 
 			<ol>
 				<li>call a TVA agent to prune this detour. (just kidding... or are we?)</li>
 				<li>
 					retrace your steps back to a <a
-						class="font-medium underline underline-offset-2"
+						class="font-medium text-primary underline underline-offset-2"
 						href="/app">safe branch.</a
 					>
 				</li>
@@ -46,7 +46,7 @@
 		position: absolute;
 		left: -2px;
 		text-shadow: -5px 0 #e77b2f;
-		background: black;
+		background: #e77c2fd6;
 		overflow: hidden;
 		top: 0;
 		animation:
@@ -63,7 +63,7 @@
 		position: absolute;
 		left: 2px;
 		text-shadow: -5px 0 #e77b2f;
-		background: black;
+		background: #e77c2f84;
 		overflow: hidden;
 		top: 0;
 		animation:

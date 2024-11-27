@@ -11,7 +11,8 @@
 			href="/"
 			class="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
 		>
-			<img src="/img/iso-img.svg" alt="Logo" class="!bg-white" />
+			<img src="/img/iso-img.svg" alt="Logo" class="!bg-white dark:hidden" />
+			<img src="/img/iso-white-img.svg" alt="Logo" class="hidden !bg-zinc-950 dark:block" />
 		</a>
 
 		<!-- Enlaces dinámicos -->

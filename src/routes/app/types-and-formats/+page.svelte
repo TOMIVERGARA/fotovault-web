@@ -31,10 +31,10 @@
 			>
 		</Card.Header>
 		<Card.Content>
-			<div class="prose">
+			<div class="prose text-primary">
 				<div class="flex flex-row items-center justify-between space-y-0">
 					<div class="flex flex-col space-y-1.5">
-						<h3 class="m-0">Types</h3>
+						<h3 class="m-0 text-primary">Types</h3>
 					</div>
 					<CreateRecordDialog
 						bind:open={isNewFilmtypeDialogOpen}
@@ -58,7 +58,7 @@
 					</CreateRecordDialog>
 				</div>
 				<div class="relative flex-1 overflow-hidden">
-					<ScrollableContainer containerClass="max-h-80" bottomShadowPos={0}>
+					<ScrollableContainer containerClass="max-h-80" bottomShadowPos={'bottom-0'}>
 						<TypesTable {filmtypes} />
 					</ScrollableContainer>
 				</div>
@@ -69,10 +69,10 @@
 				</p>
 			</div>
 			<hr class="divider mb-5 mt-5" />
-			<div class="prose">
+			<div class="prose text-primary">
 				<div class="flex flex-row items-center justify-between space-y-0">
 					<div class="flex flex-col space-y-1.5">
-						<h3 class="m-0">Formats</h3>
+						<h3 class="m-0 text-primary">Formats</h3>
 					</div>
 					<CreateComplexRecordDialog
 						bind:open={isNewFormatDialogOpen}
@@ -120,7 +120,7 @@
 					</CreateComplexRecordDialog>
 				</div>
 				<div class="relative flex-1 overflow-hidden">
-					<ScrollableContainer containerClass="max-h-80" bottomShadowPos={0}>
+					<ScrollableContainer containerClass="max-h-80" bottomShadowPos={'bottom-0'}>
 						<FormatsTable {formats} />
 					</ScrollableContainer>
 				</div>

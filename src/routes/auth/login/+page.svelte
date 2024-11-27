@@ -17,20 +17,17 @@
 				background-image:
 					url(/img/auth-login-img.jpg);"
 		></div>
-		<div class="relative z-20 mt-auto">
-			<blockquote class="space-y-2">
-				<p class="text-lg">
-					&ldquo;This library has saved me countless hours of work and helped me deliver stunning
-					designs to my clients faster than ever before. Highly recommended!&rdquo;
-				</p>
-				<footer class="text-sm">Sofia Davis</footer>
-			</blockquote>
-		</div>
 	</div>
 	<div class="lg:p-8">
 		<div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
 			<div class="flex flex-col space-y-2 text-center">
-				<a class="mx-auto" href="/"><img src="/img/fvlogo-black-img.svg" class="w-32" alt="" /></a>
+				<a class="mx-auto" href="/"
+					><img src="/img/fvlogo-black-img.svg" class="w-32 dark:hidden" alt="" /><img
+						src="/img/fvlogo-white-img.svg"
+						class="hidden w-32 dark:block"
+						alt=""
+					/></a
+				>
 				<h1 class="text-2xl font-semibold tracking-tight">login to your account</h1>
 			</div>
 			<UserAuthForm />
