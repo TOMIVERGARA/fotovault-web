@@ -149,6 +149,20 @@ export type Database = {
             referencedColumns: ["brand_id"]
           },
           {
+            foreignKeyName: "filmstock_brand_fkey"
+            columns: ["brand"]
+            isOneToOne: false
+            referencedRelation: "roll_with_filmstock_details"
+            referencedColumns: ["brand_id"]
+          },
+          {
+            foreignKeyName: "filmstock_filmtype_fkey"
+            columns: ["filmtype"]
+            isOneToOne: false
+            referencedRelation: "filmstock_with_details"
+            referencedColumns: ["filmtype_id"]
+          },
+          {
             foreignKeyName: "filmstock_filmtype_fkey"
             columns: ["filmtype"]
             isOneToOne: false
@@ -156,11 +170,32 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "filmstock_filmtype_fkey"
+            columns: ["filmtype"]
+            isOneToOne: false
+            referencedRelation: "roll_with_filmstock_details"
+            referencedColumns: ["filmtype_id"]
+          },
+          {
+            foreignKeyName: "filmstock_format_fkey"
+            columns: ["format"]
+            isOneToOne: false
+            referencedRelation: "filmstock_with_details"
+            referencedColumns: ["format_id"]
+          },
+          {
             foreignKeyName: "filmstock_format_fkey"
             columns: ["format"]
             isOneToOne: false
             referencedRelation: "format"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filmstock_format_fkey"
+            columns: ["format"]
+            isOneToOne: false
+            referencedRelation: "roll_with_filmstock_details"
+            referencedColumns: ["format_id"]
           },
         ]
       }
@@ -263,8 +298,22 @@ export type Database = {
             foreignKeyName: "lab_filmtype_filmtype_id_fkey"
             columns: ["filmtype_id"]
             isOneToOne: false
+            referencedRelation: "filmstock_with_details"
+            referencedColumns: ["filmtype_id"]
+          },
+          {
+            foreignKeyName: "lab_filmtype_filmtype_id_fkey"
+            columns: ["filmtype_id"]
+            isOneToOne: false
             referencedRelation: "filmtype"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_filmtype_filmtype_id_fkey"
+            columns: ["filmtype_id"]
+            isOneToOne: false
+            referencedRelation: "roll_with_filmstock_details"
+            referencedColumns: ["filmtype_id"]
           },
           {
             foreignKeyName: "lab_filmtype_lab_id_fkey"
@@ -308,64 +357,81 @@ export type Database = {
             referencedRelation: "roll"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "photo_roll_id_fkey"
+            columns: ["roll_id"]
+            isOneToOne: false
+            referencedRelation: "roll_with_filmstock_details"
+            referencedColumns: ["id"]
+          },
         ]
       }
       roll: {
         Row: {
+          cover_img_url: string
           created_at: string
           description: string | null
-          dev_detail_id: string | null
-          filmstock_id: string | null
+          dev_detail: string | null
+          filmstock: string | null
           id: string
           name: string
-          scan_detail_id: string | null
+          scan_detail: string | null
           user_id: string | null
         }
         Insert: {
+          cover_img_url: string
           created_at?: string
           description?: string | null
-          dev_detail_id?: string | null
-          filmstock_id?: string | null
+          dev_detail?: string | null
+          filmstock?: string | null
           id?: string
           name: string
-          scan_detail_id?: string | null
+          scan_detail?: string | null
           user_id?: string | null
         }
         Update: {
+          cover_img_url?: string
           created_at?: string
           description?: string | null
-          dev_detail_id?: string | null
-          filmstock_id?: string | null
+          dev_detail?: string | null
+          filmstock?: string | null
           id?: string
           name?: string
-          scan_detail_id?: string | null
+          scan_detail?: string | null
           user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "roll_dev_detail_id_fkey"
-            columns: ["dev_detail_id"]
+            foreignKeyName: "roll_dev_detail_fkey"
+            columns: ["dev_detail"]
             isOneToOne: false
             referencedRelation: "dev_detail"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "roll_filmstock_id_fkey"
-            columns: ["filmstock_id"]
+            foreignKeyName: "roll_filmstock_fkey"
+            columns: ["filmstock"]
             isOneToOne: false
             referencedRelation: "filmstock"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "roll_filmstock_id_fkey"
-            columns: ["filmstock_id"]
+            foreignKeyName: "roll_filmstock_fkey"
+            columns: ["filmstock"]
             isOneToOne: false
             referencedRelation: "filmstock_with_details"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "roll_scan_detail_id_fkey"
-            columns: ["scan_detail_id"]
+            foreignKeyName: "roll_filmstock_fkey"
+            columns: ["filmstock"]
+            isOneToOne: false
+            referencedRelation: "roll_with_filmstock_details"
+            referencedColumns: ["filmstock_id"]
+          },
+          {
+            foreignKeyName: "roll_scan_detail_fkey"
+            columns: ["scan_detail"]
             isOneToOne: false
             referencedRelation: "scan_detail"
             referencedColumns: ["id"]
@@ -435,13 +501,35 @@ export type Database = {
           active: boolean | null
           brand_id: string | null
           brand_name: string | null
+          filmtype_id: string | null
           filmtype_name: string | null
+          format_id: string | null
           format_name: string | null
           id: string | null
           iso: number | null
           logo_url: string | null
           name: string | null
           user_id: string | null
+        }
+        Relationships: []
+      }
+      roll_with_filmstock_details: {
+        Row: {
+          active: boolean | null
+          brand_id: string | null
+          brand_name: string | null
+          cover_img_url: string | null
+          created_at: string | null
+          description: string | null
+          filmstock_id: string | null
+          filmstock_name: string | null
+          filmtype_id: string | null
+          filmtype_name: string | null
+          format_id: string | null
+          format_name: string | null
+          id: string | null
+          iso: number | null
+          name: string | null
         }
         Relationships: []
       }

@@ -1,20 +1,11 @@
-<script lang="ts">
+<script>
 	import RollCard from './RollCard.svelte';
 
-	interface Roll {
-		id: string;
-		name: string;
-		description: string;
-		cover_img_url: string;
-		created_at: string;
-		filmstock: string;
-	}
-
-	export let rolls: Roll[];
+	export let rolls;
 
 	// Función para dividir el array en columnas
-	function distributeRollsInColumns(rolls: Roll[], numColumns: number) {
-		const columns: Roll[][] = Array.from({ length: numColumns }, () => []);
+	function distributeRollsInColumns(rolls, numColumns) {
+		const columns = Array.from({ length: numColumns }, () => []);
 		rolls.forEach((roll, index) => {
 			columns[index % numColumns].push(roll);
 		});

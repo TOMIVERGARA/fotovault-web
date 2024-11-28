@@ -1,20 +1,14 @@
-// src/routes/+page.server.ts
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import type { Tables } from '$lib/types/supabase.types';
 
 export const load: PageServerLoad = async ({ locals }) => {
     try {
         const { data: rolls, error: supabaseError } = await locals.supabase
-            .from('roll')
-            .select(`
-                id,
-                name,
-                description,
-                cover_img_url,
-                created_at,
-                filmstock
-            `)
-            .order('created_at', { ascending: false });
+            .from('roll_with_filmstock_details')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .returns<Tables<'roll_with_filmstock_details'>[]>();
 
         if (supabaseError) {
             throw error(500, supabaseError.message);
