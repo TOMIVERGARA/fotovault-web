@@ -6,12 +6,12 @@
 </script>
 
 <div class="relative isolate overflow-hidden">
-	<div class="mx-auto max-w-7xl px-6 pb-24 pt-10 sm:pb-32 lg:flex lg:px-8 lg:py-10">
+	<div class="mx-auto max-w-7xl px-6 pb-24 pt-0 sm:pb-32 lg:flex lg:px-8 lg:py-10 lg:pt-10">
 		<div class="mx-auto max-w-2xl flex-shrink-0 lg:mx-0 lg:pt-8">
 			<div class="mt-16">
 				<a href="https://github.com/TOMIVERGARA/fotovault-web" class="inline-flex space-x-6">
 					<span
-						class="rounded-full px-3 py-1 text-sm font-semibold leading-6 ring-1 ring-inset ring-indigo-500/20"
+						class="rounded-full px-3 py-0 text-xs font-semibold leading-6 ring-1 ring-inset ring-indigo-500/20 lg:py-1 lg:text-sm"
 						>check what's new</span
 					>
 					<!-- {#if releaseVersion !== null}
@@ -29,10 +29,10 @@
 					{/if} -->
 				</a>
 			</div>
-			<h1 class="mt-10 text-pretty !text-8xl font-semibold tracking-tight sm:text-7xl">
+			<h1 class="mt-3 text-pretty text-4xl font-semibold tracking-tight lg:mt-10 lg:text-8xl">
 				every shot, every roll, every note. <br /> all in one place.
 			</h1>
-			<p class="text-md mt-8 text-pretty text-muted-foreground sm:text-xl/8">
+			<p class="mt-5 text-pretty text-sm text-muted-foreground lg:mt-8 lg:text-lg">
 				track your film photography journey with ease — your photos, development notes and more in
 				one place.
 			</p>
