@@ -22,7 +22,7 @@
 	$: columns = distributeRollsInColumns(rolls, 4);
 </script>
 
-<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
 	{#each columns as column}
 		<div class="grid gap-4">
 			{#each column as roll}

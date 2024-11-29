@@ -34,10 +34,10 @@
 			console.log('Form data being submitted:', $formData); // Verifica el contenido aquí
 
 			if (result.type === 'success') {
-				toast.success('Roll created successfully');
-				await goto('/app/rolls');
+				toast.success('new roll created successfully 🤩');
+				await goto('/app/dashboard');
 			} else if (result.type === 'error') {
-				toast.error(result.error?.message || 'Failed to create roll');
+				toast.error(result.error?.message || 'failed to create roll ❌');
 			}
 		},
 		resetForm: true,
@@ -134,6 +134,7 @@
 							type="file"
 							accept="image/*"
 							class="hidden"
+							required
 							onchange={handleImageChange}
 						/>
 					</label>
