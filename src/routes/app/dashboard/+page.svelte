@@ -55,11 +55,8 @@
 			</Badge>
 		{/if}
 
-		<Button
-			on:click={() => goto('/app/brands-and-filmstocks/filmstock/new')}
-			class="ml-auto rounded-xl"
-		>
-			<Plus class="mr-2 h-4 w-4" />new filmstock
+		<Button on:click={() => goto('/app/rolls/new')} class="ml-auto rounded-xl">
+			<Plus class="mr-2 h-4 w-4" />new roll
 		</Button>
 	</div>
 	<PhotoGrid rolls={filteredRolls} />

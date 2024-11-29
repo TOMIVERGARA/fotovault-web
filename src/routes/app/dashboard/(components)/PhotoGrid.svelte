@@ -1,11 +1,18 @@
-<script>
+<script lang="ts">
+	import type { Tables } from '$lib/types/supabase.types';
 	import RollCard from './RollCard.svelte';
 
-	export let rolls;
+	export let rolls: Tables<'roll_with_filmstock_details'>[];
 
 	// Función para dividir el array en columnas
-	function distributeRollsInColumns(rolls, numColumns) {
-		const columns = Array.from({ length: numColumns }, () => []);
+	function distributeRollsInColumns(
+		rolls: Tables<'roll_with_filmstock_details'>[],
+		numColumns: number
+	): Tables<'roll_with_filmstock_details'>[][] {
+		const columns: Tables<'roll_with_filmstock_details'>[][] = Array.from(
+			{ length: numColumns },
+			() => []
+		);
 		rolls.forEach((roll, index) => {
 			columns[index % numColumns].push(roll);
 		});

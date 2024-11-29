@@ -328,38 +328,41 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_cover_img: boolean | null
           name: string | null
-          roll_id: string | null
+          roll: string | null
           stars: number | null
           user_id: string | null
         }
         Insert: {
           created_at?: string
           id?: string
+          is_cover_img?: boolean | null
           name?: string | null
-          roll_id?: string | null
+          roll?: string | null
           stars?: number | null
           user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
+          is_cover_img?: boolean | null
           name?: string | null
-          roll_id?: string | null
+          roll?: string | null
           stars?: number | null
           user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "photo_roll_id_fkey"
-            columns: ["roll_id"]
+            foreignKeyName: "photo_roll_fkey"
+            columns: ["roll"]
             isOneToOne: false
             referencedRelation: "roll"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "photo_roll_id_fkey"
-            columns: ["roll_id"]
+            foreignKeyName: "photo_roll_fkey"
+            columns: ["roll"]
             isOneToOne: false
             referencedRelation: "roll_with_filmstock_details"
             referencedColumns: ["id"]
