@@ -10,7 +10,7 @@
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
-			class=" mb-3 flex items-center space-x-4 rounded-md border p-4 hover:bg-secondary"
+			class=" mb-3 flex items-center space-x-4 rounded-xl border p-4 hover:bg-secondary"
 			class:bg-secondary={selectedBrand && selectedBrand.id === brand.id}
 			onclick={(selectedBrand = brand)}
 		>
