@@ -327,8 +327,12 @@ export type Database = {
       photo: {
         Row: {
           created_at: string
+          file_name: string | null
+          file_size: number | null
+          file_type: string | null
           id: string
           is_cover_img: boolean | null
+          last_modified: number | null
           name: string | null
           roll: string | null
           stars: number | null
@@ -336,8 +340,12 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string | null
           id?: string
           is_cover_img?: boolean | null
+          last_modified?: number | null
           name?: string | null
           roll?: string | null
           stars?: number | null
@@ -345,8 +353,12 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string | null
           id?: string
           is_cover_img?: boolean | null
+          last_modified?: number | null
           name?: string | null
           roll?: string | null
           stars?: number | null
@@ -371,7 +383,7 @@ export type Database = {
       }
       roll: {
         Row: {
-          cover_img_url: string
+          cover_img_url: string | null
           created_at: string
           description: string | null
           dev_detail: string | null
@@ -379,10 +391,11 @@ export type Database = {
           id: string
           name: string
           scan_detail: string | null
+          storage_container_name: string
           user_id: string | null
         }
         Insert: {
-          cover_img_url: string
+          cover_img_url?: string | null
           created_at?: string
           description?: string | null
           dev_detail?: string | null
@@ -390,10 +403,11 @@ export type Database = {
           id?: string
           name: string
           scan_detail?: string | null
+          storage_container_name: string
           user_id?: string | null
         }
         Update: {
-          cover_img_url?: string
+          cover_img_url?: string | null
           created_at?: string
           description?: string | null
           dev_detail?: string | null
@@ -401,6 +415,7 @@ export type Database = {
           id?: string
           name?: string
           scan_detail?: string | null
+          storage_container_name?: string
           user_id?: string | null
         }
         Relationships: [
@@ -521,7 +536,6 @@ export type Database = {
           active: boolean | null
           brand_id: string | null
           brand_name: string | null
-          cover_img_url: string | null
           created_at: string | null
           description: string | null
           filmstock_id: string | null
@@ -533,12 +547,23 @@ export type Database = {
           id: string | null
           iso: number | null
           name: string | null
+          storage_container_name: string | null
         }
         Relationships: []
       }
     }
     Functions: {
-      [_ in never]: never
+      create_roll_with_cover: {
+        Args: {
+          p_roll_id: string
+          p_roll_name: string
+          p_description: string
+          p_filmstock_id: string
+          p_storage_container_name: string
+          p_cover_image?: Json
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       iso_values: "25" | "50" | "100" | "200" | "400" | "800" | "1600" | "3200"

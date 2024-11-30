@@ -5,6 +5,22 @@ import { rollFormSchema } from "./schema.js";
 import { randomUUID } from 'crypto';
 import { zod } from "sveltekit-superforms/adapters";
 
+function createSafeStorageName(rollName: string, uuid: string): string {
+    // Tomar solo los primeros 20 caracteres del nombre normalizado
+    const safeName = rollName.toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Remover acentos
+        .replace(/[^a-z0-9-]/g, '-') // Solo permitir letras, números y guiones
+        .replace(/-+/g, '-') // Evitar guiones múltiples
+        .slice(0, 20)
+        .trim();
+
+    // Usar solo los primeros 8 caracteres del UUID
+    const shortUuid = uuid.slice(0, 8);
+
+    return `${safeName}-${shortUuid}`;
+}
+
 export const load: PageServerLoad = async ({ fetch }) => {
     try {
         const filmstocksResponse = await fetch('/api/filmstocks?active=true');
@@ -31,11 +47,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
 
 export const actions: Actions = {
     default: async ({ request, locals }) => {
-        console.log(request)
         const form = await superValidate(request, zod(rollFormSchema));
-        console.log(form)
         if (!form.valid) {
-
             const { coverImage, ...rest } = form.data;
             form.data = rest;
             return fail(400, {
@@ -46,18 +59,18 @@ export const actions: Actions = {
             });
         }
 
-        // Crear un UUID para el roll
+        // Create a UUID for the roll
         const rollId = randomUUID();
-        // Crear un nombre único para la carpeta del roll
-        const rollFolderName = `${form.data.name.toLowerCase().replace(/\s+/g, '-')}-${rollId}`;
 
-        let coverImageUrl = null;
+        // Create a unique folder name for the roll usando la nueva función
+        const rollFolderName = createSafeStorageName(form.data.name, rollId);
+
         const { coverImage, ...formDataWithoutImage } = form.data;
 
-        // Siempre crear la carpeta para el roll
+        // Always create the folder for the roll
         const { error: folderError } = await locals.supabase.storage
             .from('rolls')
-            .upload(`${rollFolderName}/.keep`, new Blob([''])); // Archivo vacío para crear la carpeta
+            .upload(`${rollFolderName}/.keep`, new Blob([''])); // Empty file to create the folder
 
         if (folderError) {
             console.log('Error creating roll folder:', folderError);
@@ -69,20 +82,20 @@ export const actions: Actions = {
             });
         }
 
-        // Si hay una imagen de cover, subirla
+        // Si hay una imagen de cover, súbela primero
         if (coverImage instanceof File) {
             const fileExt = coverImage.name.split('.').pop();
             const fileName = `${rollFolderName}/cover.${fileExt}`;
 
-            const { data: uploadData, error: uploadError } = await locals.supabase.storage
+            const { error: uploadError } = await locals.supabase.storage
                 .from('rolls')
                 .upload(fileName, coverImage, {
-                    cacheControl: '3600',
-                    upsert: false
+                    upsert: true,
+                    cacheControl: '3600'
                 });
 
             if (uploadError) {
-                console.log('Error uploading cover image:', uploadError);
+                console.error('Error uploading cover image:', uploadError);
                 return fail(500, {
                     form: { ...form, data: formDataWithoutImage },
                     error: {
@@ -90,60 +103,38 @@ export const actions: Actions = {
                     }
                 });
             }
-
-            const { data: { publicUrl } } = locals.supabase.storage
-                .from('rolls')
-                .getPublicUrl(fileName);
-
-            coverImageUrl = publicUrl;
         }
 
-        // Iniciar una transacción para crear el roll y la foto de cover
-        const { data: roll, error: rollError } = await locals.supabase
-            .from('roll')
-            .insert([
-                {
-                    id: rollId,
-                    name: formDataWithoutImage.name,
-                    description: formDataWithoutImage.description,
-                    filmstock: formDataWithoutImage.filmstockId,
-                    cover_img_url: coverImageUrl
-                }
-            ])
-            .select()
-            .single();
+        // Start a transaction to ensure all operations are atomic
+        const supabase = locals.supabase;
+        const { error: transactionError } = await supabase.rpc('create_roll_with_cover', {
+            p_roll_id: rollId,
+            p_roll_name: formDataWithoutImage.name,
+            p_description: formDataWithoutImage.description,
+            p_filmstock_id: formDataWithoutImage.filmstockId,
+            p_storage_container_name: rollFolderName,
+            p_cover_image: coverImage instanceof File ? {
+                name: coverImage.name,
+                type: coverImage.type,
+                size: coverImage.size,
+                lastModified: coverImage.lastModified
+            } : null
+        });
 
-        if (rollError) {
-            console.log('Error creating roll:', rollError);
+        if (transactionError) {
+            console.log('Error creating roll with cover:', transactionError);
             return fail(500, {
                 form: { ...form, data: formDataWithoutImage },
                 error: {
-                    message: 'Failed to create roll'
+                    message: 'Failed to create roll and cover image'
                 }
             });
-        }
-
-        // Si hay una imagen de cover, crear la entrada en la tabla photo
-        if (coverImageUrl) {
-            const { error: photoError } = await locals.supabase
-                .from('photo')
-                .insert([
-                    {
-                        name: 'Cover photo',
-                        roll: rollId,
-                        is_cover_img: true
-                    }
-                ]);
-
-            if (photoError) {
-                console.log('Error creating cover photo entry:', photoError);
-                // No fallamos aquí porque el roll ya se creó exitosamente
-            }
         }
 
         form.data = formDataWithoutImage;
         return {
             form,
+            rollId,
             success: true
         };
     }
