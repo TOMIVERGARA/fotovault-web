@@ -4,6 +4,10 @@
 	import { Toaster } from 'svelte-sonner';
 </script>
 
+<svelte:head>
+	<title>login | fv</title>
+</svelte:head>
+
 <div>
 	<Toaster />
 </div>

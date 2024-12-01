@@ -5,6 +5,10 @@
 	let { data } = $props<{ data: PageData }>();
 </script>
 
+<svelte:head>
+	<title>new roll | fv</title>
+</svelte:head>
+
 <div class="flex justify-center">
 	<Card.Root class="w-2/5">
 		<Card.Header>

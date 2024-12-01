@@ -17,5 +17,9 @@
 	});
 </script>
 
+<svelte:head>
+	<title>fotovault</title>
+</svelte:head>
+
 <ModeWatcher />
 {@render children()}

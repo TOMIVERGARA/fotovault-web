@@ -33,6 +33,10 @@
 		$filterStore.brandIds.size + $filterStore.formatIds.size + $filterStore.filmTypeIds.size;
 </script>
 
+<svelte:head>
+	<title>dashboard | fv</title>
+</svelte:head>
+
 <div class="container mx-auto px-4">
 	<div
 		class="mb-7 flex h-min w-full items-center rounded-xl border bg-white p-3 px-3 shadow-sm dark:bg-zinc-950"

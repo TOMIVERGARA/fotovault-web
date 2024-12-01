@@ -37,6 +37,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{roll.name.toLowerCase()} | fv</title>
+</svelte:head>
+
 <div class="flex gap-4">
 	<!-- Card de Detalles del Roll -->
 	<Card.Root class="flex h-[88vh] w-1/4 flex-col">

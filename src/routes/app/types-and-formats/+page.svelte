@@ -21,6 +21,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>types & formats | fv</title>
+</svelte:head>
+
 <div class="flex justify-center">
 	<Card.Root class="w-2/5">
 		<Card.Header>

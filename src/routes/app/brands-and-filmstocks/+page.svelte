@@ -22,6 +22,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>brands & filmstocks | fv</title>
+</svelte:head>
+
 <div class="flex gap-4">
 	<Card.Root class="flex h-[88vh] w-1/3 flex-col">
 		<Card.Header class="flex flex-row items-center justify-between space-y-0">
