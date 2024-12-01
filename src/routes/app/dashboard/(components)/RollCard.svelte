@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { signedUrlStore } from '$lib/stores/signedUrls';
 	import type { Tables } from '$lib/types/supabase.types';
+	import ImageWithLoader from '$lib/components/custom/ImageWithLoader.svelte';
 
 	export let roll: Tables<'roll_with_filmstock_details'>;
 
@@ -27,14 +28,13 @@
 </script>
 
 <div class="group relative h-min">
-	<a href="/roll/{roll.id}" class="block">
+	<a href="/app/rolls/{roll.id}" class="block">
 		{#if coverImageUrl}
-			<img
-				src={coverImageUrl}
-				alt={roll.name}
-				class="h-auto max-w-full rounded-xl transition-transform duration-300 group-hover:scale-[1.02]"
-				loading="lazy"
-			/>
+			<div
+				class="h-auto max-w-full overflow-hidden rounded-xl transition-transform duration-300 group-hover:scale-[1.02]"
+			>
+				<ImageWithLoader src={coverImageUrl} alt={roll.name || 'No name'} />
+			</div>
 		{/if}
 		<div
 			class="absolute -bottom-1 left-0 right-0 scale-[1.02] rounded-b-xl bg-gradient-to-t from-black/70 to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100"

@@ -12,7 +12,11 @@ export const GET: RequestHandler = async ({ locals, url }) => {
     const { data, error: signError } = await locals.supabase
         .storage
         .from('rolls')
-        .createSignedUrl(path, 3600); // 1 hora
+        .createSignedUrl(path, 3600, {
+            transform: {
+                quality: 30,
+            }
+        }); // 1 hora
 
     if (signError) {
         console.error('Error creating signed URL:', signError);
