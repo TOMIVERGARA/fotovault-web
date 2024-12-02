@@ -22,5 +22,6 @@
 		class="h-auto w-full object-contain opacity-0 transition-opacity duration-500"
 		on:load={handleLoad}
 		class:opacity-100={isLoaded}
+		loading="lazy"
 	/>
 </div>
