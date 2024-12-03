@@ -334,6 +334,7 @@ export type Database = {
           is_cover_img: boolean | null
           last_modified: number | null
           name: string | null
+          preview_name: string | null
           roll: string | null
           stars: number | null
           user_id: string | null
@@ -347,6 +348,7 @@ export type Database = {
           is_cover_img?: boolean | null
           last_modified?: number | null
           name?: string | null
+          preview_name?: string | null
           roll?: string | null
           stars?: number | null
           user_id?: string | null
@@ -360,6 +362,7 @@ export type Database = {
           is_cover_img?: boolean | null
           last_modified?: number | null
           name?: string | null
+          preview_name?: string | null
           roll?: string | null
           stars?: number | null
           user_id?: string | null
@@ -561,6 +564,7 @@ export type Database = {
           p_filmstock_id: string
           p_storage_container_name: string
           p_cover_image?: Json
+          p_preview_name?: string
         }
         Returns: undefined
       }

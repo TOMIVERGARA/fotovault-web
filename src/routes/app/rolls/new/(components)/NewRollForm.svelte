@@ -10,6 +10,48 @@
 	import { goto } from '$app/navigation';
 	import FilmstockCombobox from './FilmstockCombobox.svelte';
 
+	async function generatePreview(file: File): Promise<Blob> {
+		return new Promise((resolve, reject) => {
+			const img = new Image();
+			img.onload = () => {
+				const canvas = document.createElement('canvas');
+				const TARGET_SIZE = 600;
+
+				let width = img.width;
+				let height = img.height;
+
+				if (width > height) {
+					height = Math.round((height * TARGET_SIZE) / width);
+					width = TARGET_SIZE;
+				} else {
+					width = Math.round((width * TARGET_SIZE) / height);
+					height = TARGET_SIZE;
+				}
+
+				canvas.width = width;
+				canvas.height = height;
+
+				const ctx = canvas.getContext('2d');
+				if (!ctx) return reject(new Error('Could not get canvas context'));
+
+				ctx.imageSmoothingEnabled = true;
+				ctx.imageSmoothingQuality = 'medium';
+
+				ctx.drawImage(img, 0, 0, width, height);
+				canvas.toBlob(
+					(blob) => {
+						if (blob) resolve(blob);
+						else reject(new Error('Could not generate preview'));
+					},
+					'image/webp',
+					0.75
+				);
+			};
+			img.onerror = reject;
+			img.src = URL.createObjectURL(file);
+		});
+	}
+
 	type Props = {
 		data: SuperValidated<Infer<RollFormSchema>>;
 		filmstocks: Array<{
@@ -26,13 +68,22 @@
 
 	const form = superForm(data, {
 		validators: zodClient(rollFormSchema),
-		onSubmit: async (data) => {
-			console.log('Data being sent:', data.formData); // Asegúrate de que `filmstockId` esté presente aquí.
-			return true; // Permite continuar con el envío.
+		onSubmit: async ({ formData }) => {
+			const coverFile = formData.get('coverImage') as File;
+
+			if (coverFile && coverFile.size > 0) {
+				try {
+					const previewBlob = await generatePreview(coverFile);
+					formData.append('coverPreview', previewBlob, 'preview.webp');
+				} catch (error) {
+					toast.error('failed to generate preview');
+					return false;
+				}
+			}
+
+			return true;
 		},
 		onResult: async ({ result }) => {
-			console.log('Form data being submitted:', $formData); // Verifica el contenido aquí
-
 			if (result.type === 'success') {
 				toast.success('new roll created successfully 🤩');
 				await goto('/app/dashboard');
@@ -61,8 +112,6 @@
 			reader.readAsDataURL(file);
 		}
 	}
-
-	$inspect($formData);
 </script>
 
 <form method="POST" use:enhance class="space-y-6" enctype="multipart/form-data">

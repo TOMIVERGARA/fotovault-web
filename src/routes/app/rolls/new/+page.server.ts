@@ -65,7 +65,7 @@ export const actions: Actions = {
         // Create a unique folder name for the roll usando la nueva función
         const rollFolderName = createSafeStorageName(form.data.name, rollId);
 
-        const { coverImage, ...formDataWithoutImage } = form.data;
+        const { coverPreview, coverImage, ...formDataWithoutImage } = form.data;
 
         // Always create the folder for the roll
         const { error: folderError } = await locals.supabase.storage
@@ -105,6 +105,26 @@ export const actions: Actions = {
             }
         }
 
+        if (coverPreview instanceof Blob) {
+            const previewFileName = `${rollFolderName}/previews/cover.webp`;
+            const { error: previewUploadError } = await locals.supabase.storage
+                .from('rolls')
+                .upload(previewFileName, coverPreview, {
+                    upsert: true,
+                    contentType: 'image/webp'
+                });
+
+            if (previewUploadError) {
+                console.error('Error uploading cover image:', previewUploadError);
+                return fail(500, {
+                    form: { ...form, data: formDataWithoutImage },
+                    error: {
+                        message: 'Failed to upload cover preview'
+                    }
+                });
+            }
+        }
+
         // Start a transaction to ensure all operations are atomic
         const supabase = locals.supabase;
         const { error: transactionError } = await supabase.rpc('create_roll_with_cover', {
@@ -118,7 +138,8 @@ export const actions: Actions = {
                 type: coverImage.type,
                 size: coverImage.size,
                 lastModified: coverImage.lastModified
-            } : null
+            } : null,
+            p_preview_name: "cover.webp"
         });
 
         if (transactionError) {

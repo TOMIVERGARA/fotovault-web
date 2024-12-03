@@ -25,6 +25,7 @@ export const rollFormSchema = z.object({
                 message: 'image must be less than 10MB',
             }
         ),
+    coverPreview: z.instanceof(Blob).optional()
 });
 
 export type RollFormSchema = typeof rollFormSchema;
