@@ -1,30 +1,9 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { signedUrlStore } from '$lib/stores/signedUrls';
 	import type { Tables } from '$lib/types/supabase.types';
 	import ImageWithLoader from '$lib/components/custom/ImageWithLoader.svelte';
 
 	export let roll: Tables<'roll_with_filmstock_details'>;
-
-	let coverImageUrl: string | null = null;
-	let refreshTimer: NodeJS.Timeout;
-
-	async function updateSignedUrl() {
-		if (!roll.storage_container_name) return;
-
-		const path = `${roll.storage_container_name}/cover.jpg`;
-		coverImageUrl = await signedUrlStore.get(path);
-
-		// Programar próxima actualización
-		refreshTimer = setTimeout(updateSignedUrl, 45 * 60 * 1000); // 45 minutos
-	}
-
-	onMount(() => {
-		updateSignedUrl();
-		return () => {
-			if (refreshTimer) clearTimeout(refreshTimer);
-		};
-	});
+	export let coverImageUrl: string | null = null;
 </script>
 
 <div class="group relative h-min">
