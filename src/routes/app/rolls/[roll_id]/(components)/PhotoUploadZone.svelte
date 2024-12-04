@@ -14,6 +14,7 @@
 	import * as HoverCard from '$lib/components/ui/hover-card';
 	import Spinner from '$lib/components/custom/Spinner.svelte';
 	import MasonryGallery from '$lib/components/custom/MasonryGallery.svelte';
+	import { Skeleton } from '$lib/components/ui/skeleton';
 
 	const dispatch = createEventDispatcher();
 
@@ -350,7 +351,7 @@
 		<Button>upload photos</Button>
 	</Card.Header>
 	<Card.Content class="h-auto">
-		<div class="space-y-4">
+		<div class="h-full space-y-4">
 			<!-- Dropzone -->
 			<div
 				class="relative rounded-lg border-2 border-dashed border-gray-300 p-6 text-center transition-all
@@ -382,19 +383,7 @@
 			{#if Object.keys(photoUrls).length > 0}
 				<MasonryGallery {photoUrls} />
 			{:else}
-				<div class="flex h-full w-full flex-col items-center justify-center">
-					<img
-						class="hidden w-2/5 select-none dark:block"
-						src="/img/illustrations/no-photos-white.png"
-						alt=""
-					/>
-					<img
-						class="w-2/5 select-none dark:hidden"
-						src="/img/illustrations/no-photos-black.png"
-						alt=""
-					/>
-					<p>No photos have been added to this roll yet.</p>
-				</div>
+				<Skeleton class="h-[55vh] w-full transition-opacity duration-500" />
 			{/if}
 		</div>
 	</Card.Content>
