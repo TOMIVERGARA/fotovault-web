@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import { Progress } from '$lib/components/ui/progress';
 	import * as Card from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
 	import { Upload, X, Check } from 'lucide-svelte';
 	import { signedUrlStore } from '$lib/stores/signedUrls';
-	import ImageWithLoader from '$lib/components/custom/ImageWithLoader.svelte';
 	import { toast } from 'svelte-sonner';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import type { Database } from '$lib/types/supabase.types';
@@ -129,7 +127,14 @@
 	function handleDragLeave(e: DragEvent) {
 		e.preventDefault();
 		e.stopPropagation();
-		dragActive = false;
+		// Solo desactivamos si salimos del contenedor principal
+		const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+		const x = e.clientX;
+		const y = e.clientY;
+
+		if (x <= rect.left || x >= rect.right || y <= rect.top || y >= rect.bottom) {
+			dragActive = false;
+		}
 	}
 
 	function handleDrop(e: DragEvent) {
@@ -140,6 +145,12 @@
 		if (e.dataTransfer?.files) {
 			handleFiles(Array.from(e.dataTransfer.files));
 		}
+	}
+
+	function handleDragOver(e: DragEvent) {
+		e.preventDefault();
+		e.stopPropagation();
+		dragActive = true;
 	}
 
 	function handleFileInput(e: Event) {
@@ -280,9 +291,33 @@
 	}
 </script>
 
-<Card.Root class="w-3/4">
+<Card.Root
+	class="relative w-3/4"
+	ondragenter={handleDragEnter}
+	ondragleave={handleDragLeave}
+	ondragover={handleDragOver}
+	ondrop={handleDrop}
+>
+	<!-- Overlay para el estado de drag -->
+	{#if dragActive}
+		<div
+			class="pointer-events-none absolute inset-0 z-50 rounded-lg border-2 border-dashed border-primary bg-primary/25"
+		>
+			<div class="flex h-full w-full flex-col space-y-1 text-center">
+				<div class="mx-auto mt-6 flex items-center">
+					<Upload class="mr-2 h-8 w-8" />
+					<div class="flex flex-col text-left">
+						<span class="text-sm font-medium"> drop your photos here to start the upload... </span>
+						<span class="text-xs italic"> supported formats: .jpg/.png/.webp - max 10MB. </span>
+					</div>
+				</div>
+			</div>
+		</div>
+	{/if}
+
+	<!-- Card.Header y Card.Content existentes sin cambios -->
 	<Card.Header class="flex flex-row items-center justify-between space-y-0">
-		<div class="flex flex-col space-y-1.5">
+		<div class="flex flex-col space-y-1.5 {!dragActive || 'opacity-0'}">
 			<Card.Title>Photos</Card.Title>
 			<Card.Description>
 				{existingPhotos.length} photos in this roll
@@ -301,7 +336,6 @@
 						<div class="space-y-3">
 							{#each uploads as upload, i}
 								<div class="flex items-center gap-3 rounded-lg border p-3" transition:fade>
-									<!-- Progreso radial -->
 									{#if upload.status !== 'completed'}
 										<RadialProgress
 											value={upload.status === 'uploading_preview'
@@ -348,42 +382,28 @@
 				</HoverCard.Root>
 			</div>
 		{/if}
-		<Button>upload photos</Button>
+		<Button
+			on:click={() => document.getElementById('file-upload')?.click()}
+			class="rounded-full {!dragActive || 'opacity-0'}"
+			><Upload class="mr-2 h-4 w-4" /> upload photos</Button
+		>
 	</Card.Header>
 	<Card.Content class="h-auto">
 		<div class="h-full space-y-4">
-			<!-- Dropzone -->
-			<div
-				class="relative rounded-lg border-2 border-dashed border-gray-300 p-6 text-center transition-all
-				{dragActive ? 'border-primary bg-primary/5' : ''}"
-				on:dragenter={handleDragEnter}
-				on:dragleave={handleDragLeave}
-				on:dragover|preventDefault
-				on:drop={handleDrop}
-			>
-				<input
-					type="file"
-					id="file-upload"
-					multiple
-					accept="image/*"
-					class="hidden"
-					on:change={handleFileInput}
-				/>
-
-				<label
-					for="file-upload"
-					class="flex cursor-pointer flex-col items-center justify-center gap-2"
-				>
-					<Upload class="h-10 w-10 text-gray-400" />
-					<span class="text-sm text-gray-600">Drag and drop images or click to upload</span>
-				</label>
-			</div>
+			<input
+				type="file"
+				id="file-upload"
+				multiple
+				accept="image/*"
+				class="hidden"
+				onchange={handleFileInput}
+			/>
 
 			<!-- Photo Grid -->
 			{#if Object.keys(photoUrls).length > 0}
 				<MasonryGallery {photoUrls} />
 			{:else}
-				<Skeleton class="h-[55vh] w-full transition-opacity duration-500" />
+				<Skeleton class="h-[70vh] w-full transition-opacity duration-500" />
 			{/if}
 		</div>
 	</Card.Content>

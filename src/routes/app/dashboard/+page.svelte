@@ -59,7 +59,7 @@
 			</Badge>
 		{/if}
 
-		<Button on:click={() => goto('/app/rolls/new')} class="ml-auto rounded-xl">
+		<Button on:click={() => goto('/app/rolls/new')} class="ml-auto rounded-full">
 			<Plus class="mr-2 h-4 w-4" />new roll
 		</Button>
 	</div>
