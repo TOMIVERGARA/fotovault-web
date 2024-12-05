@@ -65,7 +65,7 @@
 								{/if}
 							</div>
 							<hr />
-							<div class="mt- flex">
+							<div class="mt-3 flex">
 								<div class="w-1/2">
 									<h3 class="font-semibold">format</h3>
 									<p>{roll.format_name}</p>

@@ -43,6 +43,7 @@
 		}[]
 	>([]);
 	let photoUrls = $state<{ [key: string]: string }>({});
+	let showCompleted = $state(false);
 
 	// Función para generar preview en WebP
 	async function generatePreview(file: File): Promise<Blob> {
@@ -113,10 +114,6 @@
 		}
 	}
 
-	$effect(() => {
-		loadExistingPhotoUrls();
-	});
-
 	// Manejadores de eventos del dropzone
 	function handleDragEnter(e: DragEvent) {
 		e.preventDefault();
@@ -160,7 +157,7 @@
 		}
 	}
 
-	// Procesar archivos
+	// Modificamos la función handleFiles para iniciar la cola
 	function handleFiles(files: File[]) {
 		const imageFiles = files.filter((file) => file.type.startsWith('image/'));
 
@@ -180,12 +177,8 @@
 
 		toast.success(`Started uploading ${imageFiles.length} images`);
 
-		// Comenzar uploads
-		uploads.forEach((upload, index) => {
-			if (upload.status === 'pending') {
-				uploadFile(index);
-			}
-		});
+		// Iniciamos la cola de procesamiento
+		processUploadQueue();
 	}
 
 	async function uploadWithProgress(
@@ -223,6 +216,25 @@
 		});
 	}
 
+	async function processUploadQueue() {
+		if (!uploads.length || uploads.every((u) => u.status === 'completed' || u.status === 'error')) {
+			if (uploads.length > 0 && uploads.every((u) => u.status === 'completed')) {
+				showCompleted = true;
+				setTimeout(() => {
+					showCompleted = false;
+					uploads = [];
+				}, 5000);
+			}
+			return;
+		}
+
+		const index = uploads.findIndex((u) => u.status === 'pending');
+		if (index === -1) return;
+
+		await uploadFile(index);
+		processUploadQueue();
+	}
+
 	async function uploadFile(index: number) {
 		const upload = uploads[index];
 		const fileName = `${Date.now()}-${upload.file.name}`;
@@ -232,20 +244,21 @@
 		const previewPath = `${containerName}/previews/${previewName}`;
 
 		try {
-			// Generar y subir preview
+			// Primero subimos el original
+			uploads[index].status = 'uploading_original';
+			uploads[index].progress = { original: 0, preview: 0 };
+
+			await uploadWithProgress(upload.file, originalPath, (progress) => {
+				uploads[index].progress.original = progress;
+			});
+
+			// Después generamos y subimos el preview
 			uploads[index].status = 'uploading_preview';
-			uploads[index].progress = { original: 0, preview: 0 }; // Reseteamos el progreso
+			uploads[index].progress = { original: 100, preview: 0 };
 
 			const previewBlob = await generatePreview(upload.file);
 			await uploadWithProgress(previewBlob, previewPath, (progress) => {
 				uploads[index].progress.preview = progress;
-			});
-
-			// Subir original
-			uploads[index].status = 'uploading_original';
-			uploads[index].progress = { original: 0, preview: 100 }; // Reseteamos el progreso del original
-			await uploadWithProgress(upload.file, originalPath, (progress) => {
-				uploads[index].progress.original = progress;
 			});
 
 			// Registrar en la base de datos
@@ -279,7 +292,6 @@
 		}
 	}
 
-	// Eliminar upload de la lista
 	function removeUpload(index: number) {
 		const upload = uploads[index];
 		if (upload.status === 'uploading_preview' || upload.status === 'uploading_original') {
@@ -289,6 +301,17 @@
 		uploads = uploads.filter((_, i) => i !== index);
 		toast.success(`Removed ${upload.file.name} from the list`);
 	}
+
+	function truncateFileName(fileName: string, maxLength: number = 10): string {
+		if (fileName.length <= maxLength) return fileName;
+		const extension = fileName.split('.').pop();
+		const name = fileName.substring(0, maxLength);
+		return `${name}...${extension ? `${extension}` : ''}`;
+	}
+
+	$effect(() => {
+		loadExistingPhotoUrls();
+	});
 </script>
 
 <Card.Root
@@ -298,7 +321,6 @@
 	ondragover={handleDragOver}
 	ondrop={handleDrop}
 >
-	<!-- Overlay para el estado de drag -->
 	{#if dragActive}
 		<div
 			class="pointer-events-none absolute inset-0 z-50 rounded-lg border-2 border-dashed border-primary bg-primary/25"
@@ -328,8 +350,13 @@
 				<HoverCard.Root>
 					<HoverCard.Trigger class="text-zinc-500">
 						<div class="flex items-center justify-center">
-							<Spinner />
-							<span class="mt-0.5 animate-pulse text-sm">uploading</span>
+							{#if showCompleted}
+								<Check class="mr-1 h-5 w-5 text-green-500" />
+								<span class="mt-0.5 animate-pulse text-sm text-green-500">done</span>
+							{:else}
+								<Spinner />
+								<span class="mt-0.5 animate-pulse text-sm">uploading</span>
+							{/if}
 						</div>
 					</HoverCard.Trigger>
 					<HoverCard.Content class="max-h-96 w-96 overflow-y-auto">
@@ -343,13 +370,13 @@
 												: upload.progress.original}
 										/>
 									{:else}
-										<Check class="h-5 w-5 text-green-500" />
+										<Check class="h-5 w-5 animate-pulse text-green-500" />
 									{/if}
 
 									<div class="flex-1">
 										<div class="flex items-center justify-between">
 											<span class="flex items-center gap-2 text-sm font-medium">
-												{upload.file.name}
+												{truncateFileName(upload.file.name)}
 												{#if upload.status === 'completed'}
 													<div class="flex items-center gap-1 text-xs text-green-500">
 														<span>upload complete</span>
