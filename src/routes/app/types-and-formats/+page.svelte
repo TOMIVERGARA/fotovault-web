@@ -1,13 +1,12 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
-	import TypesTable from './(components)/TypesTable.svelte';
 	import type { PageData } from './$types';
 	import CreateRecordDialog from '$lib/components/custom/CreateRecordDialog.svelte';
 	import { buttonVariants } from '$lib/components/ui/button';
 	import { Plus } from 'lucide-svelte';
 	import ScrollableContainer from '$lib/components/custom/ScrollableContainer.svelte';
-	import FormatsTable from './(components)/FormatsTable.svelte';
 	import CreateComplexRecordDialog from '$lib/components/custom/CreateComplexRecordDialog.svelte';
+	import SimpleDataTable from '$lib/components/custom/SimpleDataTable.svelte';
 
 	const { data } = $props<{ data: PageData }>();
 	let { filmtypes, formats } = $state(data);
@@ -63,7 +62,25 @@
 				</div>
 				<div class="relative flex-1 overflow-hidden">
 					<ScrollableContainer containerClass="max-h-80" bottomShadowPos={'bottom-0'}>
-						<TypesTable {filmtypes} />
+						<SimpleDataTable
+							data={filmtypes}
+							columns={[
+								{ key: 'name', header: 'name', type: 'text' },
+								{ key: 'active', header: 'status', type: 'badge' }
+							]}
+							actions={[
+								{
+									action: '?/toggleFilmtype',
+									invalidateKey: 'filmtypes',
+									getSuccessMessage: (item) =>
+										`Filmtype ${item.active ? 'inactivated' : 'activated'} successfully 🎉`,
+									getLoadingMessage: (item) =>
+										`${item.active ? 'Inactivating' : 'Activating'} filmtype...`,
+									getErrorMessage: (item) =>
+										`An error occurred while trying to ${item.active ? 'inactivate' : 'activate'} the filmtype.`
+								}
+							]}
+						/>
 					</ScrollableContainer>
 				</div>
 				<p class="mt-0 text-sm italic text-gray-400">
@@ -125,7 +142,27 @@
 				</div>
 				<div class="relative flex-1 overflow-hidden">
 					<ScrollableContainer containerClass="max-h-80" bottomShadowPos={'bottom-0'}>
-						<FormatsTable {formats} />
+						<SimpleDataTable
+							data={formats}
+							columns={[
+								{ key: 'name', header: 'name', type: 'text' },
+								{ key: 'width', header: 'width', type: 'number' },
+								{ key: 'height', header: 'height', type: 'number' },
+								{ key: 'active', header: 'status', type: 'badge' }
+							]}
+							actions={[
+								{
+									action: '?/toggleFormat',
+									invalidateKey: 'filmtypes',
+									getSuccessMessage: (item) =>
+										`Format ${item.active ? 'inactivated' : 'activated'} successfully 🎉`,
+									getLoadingMessage: (item) =>
+										`${item.active ? 'Inactivating' : 'Activating'} format...`,
+									getErrorMessage: (item) =>
+										`An error occurred while trying to ${item.active ? 'inactivate' : 'activate'} the format.`
+								}
+							]}
+						/>
 					</ScrollableContainer>
 				</div>
 				<p class="mt-0 text-sm italic text-gray-400">
