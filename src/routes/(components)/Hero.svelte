@@ -53,11 +53,11 @@
 		>
 			<div class="max-w-3xl flex-none sm:max-w-5xl lg:max-w-none">
 				<img
-					src="https://i.imgur.com/mSXJ4E3.png"
+					src="/img/hero-black-img.png"
 					alt="App screenshot"
 					width="2432"
 					height="1442"
-					class="w-[76rem] rounded-md bg-white/5 shadow-2xl ring-1 ring-white/10"
+					class="w-[76rem]"
 				/>
 			</div>
 		</div>
