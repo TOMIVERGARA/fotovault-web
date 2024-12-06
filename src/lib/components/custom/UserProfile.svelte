@@ -35,17 +35,10 @@
 	<DropdownMenu.Trigger asChild let:builder>
 		<Button variant="outline" size="icon" class="overflow-hidden rounded-full" builders={[builder]}>
 			<Avatar.Root>
-				<Avatar.Image src={userAvatarUrl} alt="@shadcn" />
-				{#if !userAvatarUrl}
-					<Avatar.Fallback
-						>{userDisplayName
-							.trim()
-							.split(/\s+/)
-							.slice(0, 2)
-							.map((name: string) => name[0].toUpperCase())
-							.join('')}</Avatar.Fallback
-					>
-				{/if}
+				<Avatar.Image
+					src={userAvatarUrl || `https://avatars.jakerunzer.com/${userDisplayName}`}
+					alt="@shadcn"
+				/>
 			</Avatar.Root>
 		</Button>
 	</DropdownMenu.Trigger>
