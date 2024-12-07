@@ -90,7 +90,10 @@
 </script>
 
 <form method="POST" use:enhance class="space-y-6" enctype="multipart/form-data">
-	<fieldset disabled={$submitting} class="space-y-6">
+	<fieldset
+		disabled={$submitting || !formats.length || !filmTypes.length || !brands.length}
+		class="space-y-6"
+	>
 		<div class="flex gap-4">
 			<Form.Field {form} name="name" class="w-3/4">
 				<Form.Control let:attrs>
