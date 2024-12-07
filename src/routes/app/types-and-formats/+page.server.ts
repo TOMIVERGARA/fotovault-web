@@ -84,8 +84,11 @@ export const actions = {
 
         if (error) {
             console.log(error)
-            if (error.code === '23505') { // Código típico para violación de unicidad
-                return fail(400, { error: 'This format already exists! Names are unique.', values: { name } });
+            if (error.code === '23505') {
+                return fail(400, {
+                    error: { name: 'This format already exists! Names are unique.' },
+                    values: { name, width, height }
+                });
             }
             return fail(500, { error: 'Something went wrong. Please try again.', values: { name } });
         }
