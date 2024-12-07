@@ -76,7 +76,7 @@
 			this brand doesnt own any filmstock. <br /><a
 				class="font-medium underline underline-offset-2"
 				href={`/app/brands-and-filmstocks/filmstock/new${selectedBrand ? `?brand_id=${selectedBrand.id}` : ''}`}
-				>create the first one.</a
+				>create the first one</a
 			>
 		</p>
 	</div>
