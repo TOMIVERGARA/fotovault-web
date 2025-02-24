@@ -19,11 +19,18 @@
 
 	let loading = false;
 	let actionData: ActionData = null;
+
+	function getInitialValue(field: FormField) {
+		if (field.type === 'select' && field.multiple) {
+			return existingData?.[field.id] || [];
+		}
+		return existingData?.[field.id] || '';
+	}
 </script>
 
 <Dialog.Root bind:open>
 	<Dialog.Trigger>
-		<slot name="trigger"></slot>
+		<slot name="trigger" />
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-[425px]">
 		<form
@@ -53,18 +60,43 @@
 					<div class="grid grid-cols-4 items-center gap-4">
 						<Label for={field.id} class="text-right">{field.label}</Label>
 						<div class="col-span-3">
-							<Input
-								id={field.id}
-								name={field.id}
-								type={field.type}
-								required={field.required}
-								placeholder={field.placeholder}
-								min={field.min}
-								max={field.max}
-								pattern={field.pattern}
-								class={'col-span-3' + (actionData?.error?.[field.id] ? ' border-red-500' : '')}
-								value={actionData?.values?.[field.id] || existingData?.[field.id] || ''}
-							/>
+							{#if field.type === 'select'}
+								<select
+									id={field.id}
+									name="filmtypes[]"
+									class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+									required={field.required}
+									multiple={field.multiple}
+									value={actionData?.values?.[field.id] ||
+										existingData?.[field.id] ||
+										(field.multiple ? [] : '')}
+								>
+									{#if field.placeholder}
+										<option value="" disabled>{field.placeholder}</option>
+									{/if}
+									{#each field.options || [] as option}
+										<option value={option.value}>{option.label}</option>
+									{/each}
+								</select>
+							{:else}
+								<Input
+									id={field.id}
+									name={field.id}
+									type={field.type}
+									required={field.required}
+									placeholder={field.placeholder}
+									min={field.min}
+									max={field.max}
+									pattern={field.pattern}
+									class={'col-span-3' + (actionData?.error?.[field.id] ? ' border-red-500' : '')}
+									checked={field.type === 'checkbox'
+										? actionData?.values?.[field.id] || existingData?.[field.id]
+										: undefined}
+									value={field.type !== 'checkbox'
+										? actionData?.values?.[field.id] || existingData?.[field.id] || ''
+										: undefined}
+								/>
+							{/if}
 						</div>
 						{#if actionData?.error?.[field.id]}
 							<div class="col-span-4 w-full text-right">
@@ -77,7 +109,7 @@
 
 			<Dialog.Footer>
 				<Button type="submit" disabled={loading}>
-					{loading ? 'Saving...' : 'save'}
+					{loading ? 'Saving...' : 'Save'}
 				</Button>
 			</Dialog.Footer>
 		</form>
