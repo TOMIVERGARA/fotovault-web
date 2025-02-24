@@ -9,8 +9,9 @@
 	type Column = {
 		key: string;
 		header: string;
-		type?: 'text' | 'badge' | 'number';
+		type?: 'text' | 'badge' | 'number' | 'html'; // Agregamos 'html' como tipo
 		class?: string;
+		format?: (item: any) => string; // Función para formatear el contenido
 	};
 
 	type ActionConfig = {
@@ -85,6 +86,8 @@
 					<Table.Cell class={column.class || 'font-medium'}>
 						{#if column.type === 'badge'}
 							<Badge variant="outline">{item[column.key] ? 'active' : 'inactive'}</Badge>
+						{:else if column.type === 'html' && column.format}
+							{@html column.format(item)} <!-- Renderizar HTML personalizado -->
 						{:else}
 							{item[column.key]}
 						{/if}
