@@ -7,6 +7,8 @@
 	import { enhance } from '$app/forms';
 	import { invalidate } from '$app/navigation';
 	import type { FormField, ActionData } from '../../types/component.types';
+	import { createEventDispatcher } from 'svelte';
+	const dispatch = createEventDispatcher();
 
 	export let open = false;
 	export let actionUrl: string;
@@ -14,7 +16,8 @@
 	export let description = 'Create a new record.';
 	export let successMessage = 'Record created successfully 🎉';
 	export let invalidateKey: string;
-	export let fields: FormField[] = [];
+	export let fields: any[] = [];
+	export let width: string = 'sm:max-w-[425px]';
 	export let existingData: { [key: string]: any } | null = null;
 
 	let loading = false;
@@ -26,13 +29,17 @@
 		}
 		return existingData?.[field.id] || '';
 	}
+
+	function handleCustomFieldUpdate(fieldId: string, value: any) {
+		dispatch('fieldupdate', { fieldId, value });
+	}
 </script>
 
 <Dialog.Root bind:open>
 	<Dialog.Trigger>
 		<slot name="trigger" />
 	</Dialog.Trigger>
-	<Dialog.Content class="sm:max-w-[425px]">
+	<Dialog.Content class={width}>
 		<form
 			method="POST"
 			action={actionUrl}
@@ -58,12 +65,12 @@
 			<div class="grid gap-4 py-4">
 				{#each fields as field}
 					<div class="grid grid-cols-4 items-center gap-4">
-						<Label for={field.id} class="text-right">{field.label}</Label>
-						<div class="col-span-3">
-							{#if field.type === 'select'}
+						{#if field.type === 'select'}
+							<Label for={field.id} class="text-right">{field.label}</Label>
+							<div class="col-span-3">
 								<select
 									id={field.id}
-									name="filmtypes[]"
+									name={field.id}
 									class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 									required={field.required}
 									multiple={field.multiple}
@@ -78,7 +85,23 @@
 										<option value={option.value}>{option.label}</option>
 									{/each}
 								</select>
-							{:else}
+							</div>
+						{:else if field.type === 'custom'}
+							<div class="col-span-4 w-full">
+								<svelte:component
+									this={field.component}
+									id={field.id}
+									name={field.id}
+									value={actionData?.values?.[field.id] || existingData?.[field.id] || ''}
+									on:update={(e: { detail: any }) => {
+										handleCustomFieldUpdate(field.id, e.detail);
+										if (field.onSave) field.onSave(e.detail);
+									}}
+								/>
+							</div>
+						{:else}
+							<Label for={field.id} class="text-right">{field.label}</Label>
+							<div class="col-span-3">
 								<Input
 									id={field.id}
 									name={field.id}
@@ -96,8 +119,9 @@
 										? actionData?.values?.[field.id] || existingData?.[field.id] || ''
 										: undefined}
 								/>
-							{/if}
-						</div>
+							</div>
+						{/if}
+
 						{#if actionData?.error?.[field.id]}
 							<div class="col-span-4 w-full text-right">
 								<p class="mt-0 text-xs text-red-500">{actionData.error[field.id]}</p>
