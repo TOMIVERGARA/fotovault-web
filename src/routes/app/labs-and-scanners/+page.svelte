@@ -53,7 +53,7 @@
 								placeholder: 'ColorLab Pro'
 							},
 							{
-								id: 'filmtypes',
+								id: 'filmtypes[]',
 								label: 'Film Types',
 								type: 'select',
 								multiple: true,
