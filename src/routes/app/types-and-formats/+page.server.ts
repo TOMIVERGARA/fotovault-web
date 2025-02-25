@@ -1,4 +1,4 @@
-import type { Tables } from "$lib/types/supabase.types";
+
 import type { PageServerLoad, Actions } from "./$types";
 import { fail } from '@sveltejs/kit';
 
