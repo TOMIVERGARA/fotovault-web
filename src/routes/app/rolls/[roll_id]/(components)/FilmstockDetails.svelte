@@ -10,7 +10,7 @@
 	{#if roll.iso}
 		<Badge
 			variant="outline"
-			class="ml-2  {roll.iso < 250
+			class="ml-auto  {roll.iso < 250
 				? 'border-blue-600 bg-blue-200 text-blue-600'
 				: roll.iso < 450
 					? 'border-orange-600 bg-orange-200 text-orange-600'
