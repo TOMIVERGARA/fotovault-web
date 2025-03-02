@@ -8,11 +8,12 @@
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import PhotoUploadZone from './(components)/PhotoUploadZone.svelte';
 	import { invalidate } from '$app/navigation';
-	import { Upload } from 'lucide-svelte';
+	import { Plus, PlusIcon, Upload } from 'lucide-svelte';
 	import FilmstockDetails from './(components)/FilmstockDetails.svelte';
+	import DevDetails from './(components)/DevDetails.svelte';
 
 	const { data } = $props<{ data: PageData }>();
-	let { roll, photos } = $state(data);
+	let { roll, photos, labs } = $state(data);
 
 	interface Photo {
 		name: string;
@@ -31,7 +32,7 @@
 </script>
 
 <svelte:head>
-	<title>{roll.name.toLowerCase()} | fv</title>
+	<title>{roll?.name?.toLowerCase() || 'Untitled roll'} | fv</title>
 </svelte:head>
 
 <div class="flex gap-4">
@@ -39,8 +40,10 @@
 	<Card.Root class="flex h-[88vh] w-1/4 flex-col">
 		<Card.Header class="flex flex-row items-center justify-between space-y-0">
 			<div class="flex flex-col space-y-1.5">
-				<Card.Title>{roll.name}</Card.Title>
-				<Card.Description>{roll.description}</Card.Description>
+				<Card.Title>{roll?.name || 'Loading...'}</Card.Title>
+				<Card.Description
+					>{roll.description || 'this roll does not have a description.'}</Card.Description
+				>
 			</div>
 		</Card.Header>
 		<Card.Content class="relative flex flex-1 flex-col">
@@ -55,7 +58,7 @@
 					<Accordion.Item value="item-2">
 						<Accordion.Trigger>dev details</Accordion.Trigger>
 						<Accordion.Content>
-							Yes. It comes with default styles that matches the other components' aesthetic.
+							<DevDetails {labs} />
 						</Accordion.Content>
 					</Accordion.Item>
 					<Accordion.Item value="item-3">
@@ -76,11 +79,11 @@
 	<!-- Card de Fotos -->
 	<PhotoUploadZone
 		supabase={data.supabase}
-		rollId={roll.id}
-		containerName={roll.storage_container_name}
+		rollId={roll?.id}
+		containerName={roll?.storage_container_name}
 		existingPhotos={photos}
 		on:photoUploaded={() => {
-			invalidate(`/api/rolls/${roll.id}`);
+			invalidate(`/api/rolls/${roll?.id}`);
 		}}
 	/>
 </div>
