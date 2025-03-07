@@ -4,30 +4,37 @@ import { fail } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ fetch, params }) => {
     try {
-        const [rollResponse, labsResponse] = await Promise.all([
-            fetch(`/api/rolls/${params.roll_id}`),
-            fetch('/api/labs?active=true')
+        // Hacer todas las solicitudes en paralelo
+        const [rollResponse, labsResponse, devDetailResponse, scanDetailResponse] = await Promise.all([
+            fetch(`/api/rolls/${params.roll_id}`), // Obtener el roll
+            fetch('/api/labs?active=true'), // Obtener los labs activos
+            fetch(`/api/rolls/${params.roll_id}/dev-detail`), // Obtener dev_detail si existe
+            fetch(`/api/rolls/${params.roll_id}/scan-detail`) // Obtener scan_detail si existe
         ]);
 
-        // Mantener el manejo original de errores del endpoint de rolls
+        // Manejar errores en la respuesta del roll
         if (!rollResponse.ok) {
             throw error(rollResponse.status, 'Failed to load roll details');
         }
 
-        // Cargar labs solo si es necesario
+        // Manejar errores en la respuesta de labs
         if (!labsResponse.ok) {
             console.error('Error loading labs, using empty array');
         }
 
-        // Mantener la estructura original del endpoint de rolls
+        // Obtener los datos de las respuestas
         const rollData = await rollResponse.json();
         const labsData = await labsResponse.json().catch(() => []);
+        const devDetailData = await devDetailResponse.json().catch(() => null); // null si no existe
+        const scanDetailData = await scanDetailResponse.json().catch(() => null); // null si no existe
 
-        // Preservar compatibilidad con el frontend existente
+        // Retornar los datos
         return {
             roll: rollData.roll || rollData, // Compatibilidad con ambas estructuras
             photos: rollData.photos || [],
-            labs: labsData || []
+            labs: labsData || [],
+            devDetail: devDetailData, // Datos de dev_detail (puede ser null)
+            scanDetail: scanDetailData // Datos de scan_detail (puede ser null)
         };
 
     } catch (err) {
@@ -95,6 +102,46 @@ export const actions = {
             return fail(500, {
                 error: 'An unexpected error occurred. Please try again.',
                 values: { lab_id, score, notes }
+            });
+        }
+    },
+    updateDescription: async ({ request, locals, params }) => {
+        console.log("HOLA ARRANCO")
+        // Obtener el formulario enviado
+        const formData = await request.formData();
+        const newDescription = formData.get('description') as string;
+
+        // Validar que el campo no esté vacío
+        if (!newDescription) {
+            return fail(400, {
+                error: 'La descripción no puede estar vacía',
+                values: { description: newDescription }
+            });
+        }
+
+        try {
+            // Actualizar la descripción en Supabase
+            const { error: supabaseError } = await locals.supabase
+                .from('roll') // Nombre de la tabla en Supabase
+                .update({ description: newDescription })
+                .eq('id', params.roll_id); // Filtra por el ID del roll
+
+            // Manejar errores de Supabase
+            if (supabaseError) {
+                console.error('Error updating description in Supabase:', supabaseError);
+                return fail(500, {
+                    error: 'Error al actualizar la descripción en la base de datos',
+                    values: { description: newDescription }
+                });
+            }
+
+            // Éxito
+            return { success: true };
+        } catch (err) {
+            console.error('Unexpected error:', err);
+            return fail(500, {
+                error: 'Ocurrió un error inesperado. Inténtalo de nuevo.',
+                values: { description: newDescription }
             });
         }
     }
