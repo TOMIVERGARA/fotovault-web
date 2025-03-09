@@ -9,10 +9,11 @@
 	import Moon from 'lucide-svelte/icons/moon';
 	import Computer from 'lucide-svelte/icons/computer';
 
-	import { page } from '$app/stores';
+	import { profileStore } from '$lib/stores/profiles';
 
-	const userAvatarUrl = $page.data.session?.user.user_metadata.avatar_url;
-	const userDisplayName = $page.data.session?.user.user_metadata.display_name;
+	const userAvatarUrl = $profileStore?.avatar_url;
+	const userDisplayName = $profileStore?.display_name;
+	const userUsername = $profileStore?.username;
 
 	async function handleLogout() {
 		const response = await fetch('/api/logout', {
@@ -42,7 +43,14 @@
 			</Avatar.Root>
 		</Button>
 	</DropdownMenu.Trigger>
-	<DropdownMenu.Content align="end">
+	<DropdownMenu.Content class="w-44" align="end">
+		<DropdownMenu.Label class="font-normal">
+			<div class="flex flex-col space-y-1">
+				<p class="text-sm font-medium leading-none">{userDisplayName?.toLowerCase()}</p>
+				<p class="text-xs leading-none text-muted-foreground">@{userUsername?.toLowerCase()}</p>
+			</div>
+		</DropdownMenu.Label>
+		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
 			<DropdownMenu.Label>Theme</DropdownMenu.Label>
 			<DropdownMenu.Separator />
@@ -62,10 +70,10 @@
 		<DropdownMenu.Group>
 			<DropdownMenu.Label>My Account</DropdownMenu.Label>
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item>Settings</DropdownMenu.Item>
-			<DropdownMenu.Item>Support</DropdownMenu.Item>
+			<DropdownMenu.Item href="/app/settings">profile settings</DropdownMenu.Item>
+			<DropdownMenu.Item>support</DropdownMenu.Item>
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item onclick={handleLogout}>Logout</DropdownMenu.Item>
+			<DropdownMenu.Item onclick={handleLogout}>logout</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
