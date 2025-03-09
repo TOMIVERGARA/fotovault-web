@@ -8,6 +8,7 @@
 	import { invalidate } from '$app/navigation';
 	import type { FormField, ActionData } from '../../types/component.types';
 	import { createEventDispatcher } from 'svelte';
+
 	const dispatch = createEventDispatcher();
 
 	export let open = false;
@@ -19,6 +20,8 @@
 	export let fields: any[] = [];
 	export let width: string = 'sm:max-w-[425px]';
 	export let existingData: { [key: string]: any } | null = null;
+
+	export let onSuccess: ((data: any) => void) | null = null;
 
 	let loading = false;
 	let actionData: ActionData = null;
@@ -51,6 +54,10 @@
 						open = false;
 						await invalidate(invalidateKey);
 						toast.success(successMessage);
+
+						if (onSuccess) {
+							onSuccess(result.data);
+						}
 					} else if (result.type === 'failure') {
 						actionData = result.data as ActionData;
 					}
