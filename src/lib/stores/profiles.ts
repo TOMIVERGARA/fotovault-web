@@ -5,7 +5,7 @@ export type Profile = {
     username: string | null;
     email: string;
     display_name: string | null;
-    avatar_url: string;
+    avatar: string;
     created_at: string;
     user_id: string;
 };

@@ -11,7 +11,7 @@
 
 	import { profileStore } from '$lib/stores/profiles';
 
-	const userAvatarUrl = $profileStore?.avatar_url;
+	const userAvatarUrl = $profileStore?.avatar;
 	const userDisplayName = $profileStore?.display_name;
 	const userUsername = $profileStore?.username;
 
