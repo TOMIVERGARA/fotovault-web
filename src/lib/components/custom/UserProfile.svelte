@@ -10,10 +10,23 @@
 	import Computer from 'lucide-svelte/icons/computer';
 
 	import { profileStore } from '$lib/stores/profiles';
+	import { onMount } from 'svelte';
 
-	const userAvatarUrl = $profileStore?.avatar;
-	const userDisplayName = $profileStore?.display_name;
-	const userUsername = $profileStore?.username;
+	let userAvatarUrl: string | undefined = $state();
+	let userDisplayName: string | null | undefined = $state();
+	let userUsername: string | null | undefined = $state();
+
+	onMount(() => {
+		const unsubscribe = profileStore.subscribe((profile) => {
+			if (profile) {
+				userAvatarUrl = profile.avatar;
+				userDisplayName = profile.display_name;
+				userUsername = profile.username;
+			}
+		});
+
+		return () => unsubscribe(); // Limpiar suscripción al desmontar
+	});
 
 	async function handleLogout() {
 		const response = await fetch('/api/logout', {
