@@ -12,7 +12,7 @@ const routes = [
     { path: '/app/brands-and-filmstocks', name: 'Brands & Film Stocks', icon: Factory },
     { path: '/app/types-and-formats', name: 'Film Types & Formats', icon: Ruler },
     { path: '/app/labs-and-scanners', name: 'Labs & Scanners', icon: FlaskConical },
-    { path: '/settings', name: 'Settings', icon: Settings },
+    { path: '/app/settings', name: 'Settings', icon: Settings },
 ];
 
 export { routes };
