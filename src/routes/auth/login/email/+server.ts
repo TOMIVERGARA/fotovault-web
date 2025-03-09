@@ -9,20 +9,6 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }) =>
         return json({ error: 'Email is required' }, { status: 400 });
     }
 
-    // Verificamos si el usuario ya existe
-    const { data: { user } } = await supabase.auth.getUser();
-
-    let isNewUser = false;
-    if (!user) {
-        // Verificamos si el email ya está registrado
-        const { data: existingUsers } = await supabase
-            .from('users')
-            .select('email')
-            .eq('email', email)
-            .maybeSingle();
-
-        isNewUser = !existingUsers;
-    }
 
     const { data, error } = await supabase.auth.signInWithOtp({
         email,
@@ -36,7 +22,6 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }) =>
     }
 
     return json({
-        success: true,
-        isNewUser
+        success: true
     });
-};
+}

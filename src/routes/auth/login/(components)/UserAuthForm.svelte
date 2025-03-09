@@ -11,7 +11,7 @@
 
 	let isLoading = false;
 	let isOtpSent = false;
-	let isFirstTimeUser = false;
+	let needsName = false;
 	let email = '';
 	let name = '';
 	let otpAttempts = 0;
@@ -27,20 +27,23 @@
 		try {
 			const response = await fetch('/auth/login/email', {
 				method: 'POST',
-				body: formData
+				body: formData,
+				headers: {
+					Accept: 'application/json'
+				}
 			});
 
 			const data = await response.json();
 
 			if (response.ok) {
 				isOtpSent = true;
-				isFirstTimeUser = data.isNewUser;
 				startResendTimer();
 				toast.success('login code sent to your email 📧');
 			} else {
 				toast.error(data.error || 'failed to send login code. Please try again 🤷‍♂️');
 			}
 		} catch (error) {
+			console.log(error);
 			toast.error('an unexpected error occurred. Please try again 🤷‍♂️');
 		} finally {
 			isLoading = false;
@@ -54,11 +57,6 @@
 		const formData = new FormData(form);
 		formData.append('email', email);
 
-		// Si es un usuario nuevo, agregamos el nombre
-		if (isFirstTimeUser) {
-			formData.append('name', name);
-		}
-
 		try {
 			const response = await fetch('/auth/login/email/verify', {
 				method: 'POST',
@@ -68,8 +66,15 @@
 			const data = await response.json();
 
 			if (response.ok) {
-				toast.success('login successful ✅');
-				window.location.href = '/app';
+				// Si el servidor nos indica que el usuario necesita proporcionar su nombre
+				if (data.needsName) {
+					needsName = false; // ESTA ASI PARA FORZAR QUE NO SE PREGUNTE EL NOMBRE.
+					toast.info('please provide your name to complete registration 📝');
+				} else {
+					// Si todo está completo, redirigimos al usuario
+					toast.success('login successful ✅');
+					window.location.href = '/app';
+				}
 			} else {
 				otpAttempts++;
 
@@ -81,6 +86,37 @@
 				}
 			}
 		} catch (error) {
+			console.log(error);
+			toast.error('an unexpected error occurred. please try again 🤷‍♂️');
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	async function handleNameSubmit(event: SubmitEvent) {
+		isLoading = true;
+
+		// Crear un nuevo FormData que solo contiene el nombre
+		const formData = new FormData();
+		formData.append('name', name);
+
+		try {
+			console.log('TRYING');
+			const response = await fetch('/api/authmanager/complete-registration', {
+				method: 'POST',
+				body: formData
+			});
+			console.log(JSON.stringify(response));
+
+			if (response.ok) {
+				toast.success('registration completed successfully ✅');
+				//window.location.href = '/app';
+			} else {
+				const data = await response.json();
+				toast.error(data.error || 'failed to update profile. please try again 🫠');
+			}
+		} catch (error) {
+			console.log(error);
 			toast.error('an unexpected error occurred. please try again 🤷‍♂️');
 		} finally {
 			isLoading = false;
@@ -107,7 +143,7 @@
 
 	function resetForm() {
 		isOtpSent = false;
-		isFirstTimeUser = false;
+		needsName = false;
 		email = '';
 		name = '';
 		otpAttempts = 0;
@@ -116,8 +152,10 @@
 	}
 </script>
 
+<!-- El resto del componente sigue igual -->
 <div class={cn('grid gap-6', className)} {...$$restProps}>
 	{#if !isOtpSent}
+		<!-- Formulario para ingresar email -->
 		<form on:submit|preventDefault={handleEmailSubmit}>
 			<div class="grid gap-2">
 				<div class="grid gap-1">
@@ -147,13 +185,94 @@
 				</p>
 			</div>
 		</form>
-	{:else}
-		<form on:submit|preventDefault={handleOtpSubmit}>
-			<div class="grid gap-2">
-				<p class="text-center text-sm text-muted-foreground">
-					We've sent a login code to <strong>{email}</strong>
-				</p>
-				{#if isFirstTimeUser}
+	{:else if isOtpSent && !needsName}
+		{#key 'otpForm'}
+			<!-- Formulario para ingresar OTP -->
+			<form on:submit|preventDefault={handleOtpSubmit}>
+				<div class="grid gap-2">
+					<p class="text-center text-sm text-muted-foreground">
+						We've sent a login code to <strong>{email}</strong>
+					</p>
+					<div class="grid gap-1">
+						<Label class="sr-only" for="otp">enter code</Label>
+						<Input
+							id="otp"
+							name="otp"
+							placeholder="enter the code sent to your email"
+							type="text"
+							inputmode="numeric"
+							pattern="[0-9]*"
+							maxlength={6}
+							disabled={isLoading}
+							required
+						/>
+					</div>
+					{#if !canResendOtp && resendTimer > 0}
+						<p class="mb-2 text-xs italic text-muted-foreground">
+							you can request a new code in {resendTimer} seconds
+						</p>
+					{/if}
+
+					<div class="flex w-full gap-2">
+						{#if otpAttempts > 0}
+							<Button
+								type="submit"
+								class="w-1/2"
+								disabled={isLoading || (otpAttempts >= 3 && !canResendOtp)}
+							>
+								{#if isLoading}
+									<span class="mr-2">loading...</span>
+								{/if}
+								verify code
+							</Button>
+
+							<Button
+								type="button"
+								variant="outline"
+								class="w-1/2 text-sm"
+								on:click={handleResendOtp}
+								disabled={isLoading || !canResendOtp}
+							>
+								request new code
+							</Button>
+						{:else}
+							<Button
+								type="submit"
+								class="w-full"
+								disabled={isLoading || (otpAttempts >= 3 && !canResendOtp)}
+							>
+								{#if isLoading}
+									<span class="mr-2">loading...</span>
+								{/if}
+								verify code
+							</Button>
+						{/if}
+					</div>
+					<div class="relative mt-4">
+						<div class="absolute inset-0 flex items-center">
+							<span class="w-full border-t" />
+						</div>
+						<div class="relative flex justify-center text-xs uppercase">
+							<span class="bg-background px-2 text-muted-foreground"> Or</span>
+						</div>
+					</div>
+
+					<div class="flex flex-col gap-2 text-center">
+						<Button type="button" variant="link" class="" on:click={resetForm}>
+							use a different email
+						</Button>
+					</div>
+				</div>
+			</form>
+		{/key}
+	{:else if needsName}
+		<!-- Formulario para ingresar nombre (solo para nuevos usuarios) -->
+		{#key needsName}
+			<form on:submit|preventDefault={handleNameSubmit}>
+				<div class="grid gap-2">
+					<p class="text-center text-sm text-muted-foreground">
+						You're almost done! Please enter your name to complete registration
+					</p>
 					<div class="grid gap-1">
 						<Label class="sr-only" for="name">name</Label>
 						<Input
@@ -166,78 +285,15 @@
 							required
 						/>
 					</div>
-				{/if}
-				<div class="grid gap-1">
-					<Label class="sr-only" for="otp">enter code</Label>
-					<Input
-						id="otp"
-						name="otp"
-						placeholder="enter the code sent to your email"
-						type="text"
-						inputmode="numeric"
-						pattern="[0-9]*"
-						maxlength={6}
-						disabled={isLoading}
-						required
-					/>
-				</div>
-				{#if !canResendOtp && resendTimer > 0}
-					<p class="mb-2 text-xs italic text-muted-foreground">
-						you can request a new code in {resendTimer} seconds
-					</p>
-				{/if}
-
-				<div class="flex w-full gap-2">
-					{#if otpAttempts > 0}
-						<Button
-							type="submit"
-							class="w-1/2"
-							disabled={isLoading || (otpAttempts >= 3 && !canResendOtp)}
-						>
-							{#if isLoading}
-								<span class="mr-2">loading...</span>
-							{/if}
-							{isFirstTimeUser ? 'complete registration' : 'verify code'}
-						</Button>
-
-						<Button
-							type="button"
-							variant="outline"
-							class="w-1/2 text-sm"
-							on:click={handleResendOtp}
-							disabled={isLoading || !canResendOtp}
-						>
-							request new code
-						</Button>
-					{:else}
-						<Button
-							type="submit"
-							class="w-full"
-							disabled={isLoading || (otpAttempts >= 3 && !canResendOtp)}
-						>
-							{#if isLoading}
-								<span class="mr-2">loading...</span>
-							{/if}
-							{isFirstTimeUser ? 'complete registration' : 'verify code'}
-						</Button>
-					{/if}
-				</div>
-				<div class="relative mt-4">
-					<div class="absolute inset-0 flex items-center">
-						<span class="w-full border-t" />
-					</div>
-					<div class="relative flex justify-center text-xs uppercase">
-						<span class="bg-background px-2 text-muted-foreground"> Or</span>
-					</div>
-				</div>
-
-				<div class="flex flex-col gap-2 text-center">
-					<Button type="button" variant="link" class="" on:click={resetForm}>
-						use a different email
+					<Button type="submit" disabled={isLoading}>
+						{#if isLoading}
+							<span class="mr-2">loading...</span>
+						{/if}
+						complete registration
 					</Button>
 				</div>
-			</div>
-		</form>
+			</form>
+		{/key}
 	{/if}
 	{#if !isOtpSent}
 		<div class="relative">
