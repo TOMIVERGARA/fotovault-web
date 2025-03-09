@@ -5,6 +5,9 @@
 	import { cn } from '$lib/utils.js';
 	import Google from '$lib/icons/Google.svelte';
 	import { toast } from 'svelte-sonner';
+	import { Turnstile } from 'svelte-turnstile';
+	import { mode } from 'mode-watcher';
+	import { PUBLIC_CF_TURNSTILE_SITE_KEY } from '$env/static/public';
 
 	let className: string | undefined | null = undefined;
 	export { className as class };
@@ -14,6 +17,7 @@
 	let needsName = false;
 	let email = '';
 	let name = '';
+	let turnstileToken = '';
 	let otpAttempts = 0;
 	let canResendOtp = false;
 	let resendTimer = 30;
@@ -174,6 +178,7 @@
 						required
 					/>
 				</div>
+				<Turnstile siteKey={PUBLIC_CF_TURNSTILE_SITE_KEY} theme={$mode} size="flexible" />
 				<Button type="submit" disabled={isLoading}>
 					{#if isLoading}
 						<span class="mr-2">Loading...</span>
