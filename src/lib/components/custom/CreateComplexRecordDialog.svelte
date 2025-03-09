@@ -107,7 +107,9 @@
 								/>
 							</div>
 						{:else}
-							<Label for={field.id} class="text-right">{field.label}</Label>
+							{#if field.type != 'hidden'}
+								<Label for={field.id} class="text-right">{field.label}</Label>
+							{/if}
 							<div class="col-span-3">
 								<Input
 									id={field.id}
