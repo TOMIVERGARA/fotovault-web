@@ -1,7 +1,8 @@
 <script lang="ts">
 	import UserAuthForm from './(components)/UserAuthForm.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import { mode } from 'mode-watcher';
 	import { Toaster } from 'svelte-sonner';
+	import { Smartphone, Laptop, ArrowRight } from 'lucide-svelte';
 </script>
 
 <svelte:head>
@@ -10,6 +11,40 @@
 
 <div>
 	<Toaster />
+</div>
+<div
+	class="prose flex h-full w-full items-center justify-center p-5 text-center align-middle !text-primary md:hidden"
+>
+	<div class="flex w-full flex-col items-center justify-center text-center align-middle">
+		<a href="/" class="flex items-center text-lg font-semibold md:text-base"
+			><img
+				src="/img/fvlogo-black-img.svg"
+				class=" h-9 w-auto"
+				alt="Logo en negro"
+				class:hidden={$mode == 'dark'}
+			/>
+
+			<!-- Logo para modo oscuro -->
+			<img
+				src="/img/fvlogo-white-img.svg"
+				alt="Logo en blanco"
+				class="h-9 w-auto"
+				class:hidden={$mode == 'light'}
+			/></a
+		>
+		<div class="mb-2 flex items-center align-middle text-zinc-400">
+			<Smartphone size="34" />
+			<ArrowRight class="mx-2" />
+			<Laptop size="34" />
+		</div>
+		<h3 class="mt-0 w-2/3 text-primary">this app is optimized for larger displays!</h3>
+		<p class="text-zinc-400">
+			fotovault is designed to help you explore your photos effortlessly and beautifully.
+			<br /><i>
+				for the full experience and all features, please use a larger device like a PC or tablet.</i
+			>
+		</p>
+	</div>
 </div>
 <div
 	class="container relative hidden min-h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0"
