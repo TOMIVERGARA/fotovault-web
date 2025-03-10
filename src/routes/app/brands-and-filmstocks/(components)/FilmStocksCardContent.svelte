@@ -97,11 +97,11 @@
 			srcset=""
 		/>
 		<p class="text-center">
-			This brand doesn’t own any filmstock. <br />
+			this brand doesn’t own any filmstock. <br />
 			<a
 				class="font-medium underline underline-offset-2"
 				href={`/app/brands-and-filmstocks/filmstock/new${selectedBrand ? `?brand_id=${selectedBrand.id}` : ''}`}
-				>Create the first one</a
+				>create the first one</a
 			>
 		</p>
 	</div>
@@ -116,6 +116,13 @@
 							<div class="absolute inset-0 z-10 rounded-md bg-secondary/60"></div>
 						{/if}
 						<div class="flex">
+							<!-- <img
+							src={filmstock.logo_url}
+							alt="{filmstock.name} logo -"
+							class="mx-auto mb-4 w-3/4 select-none"
+							class:opacity-50={!(filmstock.active ?? false)}
+							class:grayscale={!(filmstock.active ?? false)}
+						/> -->
 							<h2
 								class="text-lg font-bold"
 								class:text-gray-500={!(filmstock.active ?? false)}
@@ -148,21 +155,52 @@
 							class:dark:text-gray-400={!(filmstock.active ?? false)}
 						>
 							<p>
-								Type:
+								type:
 								<a href="" class="font-medium underline underline-offset-2"
 									>{filmstock.filmtype_name}</a
 								>
 							</p>
 							<p>
-								Format:
+								format:
 								<a href="" class="font-medium underline underline-offset-2"
 									>{filmstock.format_name}</a
 								>
 							</p>
-							<p>Brand: {filmstock.brand_name}</p>
+							<p>brand: {filmstock.brand_name}</p>
 						</div>
 					</div>
 				</ContextMenu.Trigger>
+				<ContextMenu.Content>
+					{#if !(filmstock.active ?? false)}
+						<ContextMenu.Item
+							on:click={() => toggleFilmstockActive(filmstock.id, filmstock.active)}
+							class="rounded-button flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
+						>
+							<div class="flex items-center text-green-500">
+								<ListRestart class="mr-2 size-5" />
+								activate
+							</div>
+						</ContextMenu.Item>
+					{:else}
+						<ContextMenu.Item
+							class="rounded-button flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
+						>
+							<div class="flex items-center">
+								<Pen class="mr-2 size-5" />
+								edit
+							</div>
+						</ContextMenu.Item>
+						<ContextMenu.Item
+							on:click={() => toggleFilmstockActive(filmstock.id, filmstock.active)}
+							class="rounded-button flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
+						>
+							<div class="flex items-center text-red-500">
+								<Trash class="mr-2 size-5" />
+								deactivate
+							</div>
+						</ContextMenu.Item>
+					{/if}
+				</ContextMenu.Content>
 			</ContextMenu.Root>
 		{/each}
 	</div>

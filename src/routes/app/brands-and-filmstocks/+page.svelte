@@ -3,7 +3,8 @@
 	import BrandsCardContent from './(components)/BrandsCardContent.svelte';
 	import type { PageData } from './$types';
 	import ScrollableContainer from '$lib/components/custom/ScrollableContainer.svelte';
-	import { Plus } from 'lucide-svelte';
+	import { Info, Plus } from 'lucide-svelte';
+	import * as Alert from '$lib/components/ui/alert';
 
 	import CreateRecordDialog from '$lib/components/custom/CreateRecordDialog.svelte';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
@@ -59,7 +60,7 @@
 				</ScrollableContainer>
 			</Card.Content>
 		</Card.Root>
-		<Card.Root class="w-2/3">
+		<Card.Root class="flex h-[88vh] w-2/3 flex-col">
 			<Card.Header class="flex flex-row items-center justify-between space-y-0">
 				<div class="flex flex-col space-y-1.5">
 					<Card.Title
@@ -80,9 +81,16 @@
 					>
 				</div>
 			</Card.Header>
-			<Card.Content class="h-[71vh]">
+			<Card.Content class="flex min-h-0 flex-1 flex-col">
 				{#if selectedBrand}
 					<FilmStocksCardContent {selectedBrand} />
+					<Alert.Root class="m-2 mt-auto">
+						<Info class="h-4 w-4" />
+						<Alert.Title>right click to edit filmstocks</Alert.Title>
+						<Alert.Description
+							>you can right click any filmstock to see advanced options</Alert.Description
+						>
+					</Alert.Root>
 				{:else}
 					<div class="flex h-full w-full flex-col items-center justify-center">
 						<img
