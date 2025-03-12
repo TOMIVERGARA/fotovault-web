@@ -1,38 +1,61 @@
-# sv
+# fotovault  
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+![beta warning](https://img.shields.io/badge/status-beta-red)
 
-## Creating a project
+Organize and document your analog film rolls with fotovault, a comprehensive tool for managing film formats, tracking development details, and keeping every shot, every roll, every note—all in one place. Built with **SvelteKit** and **Supabase**.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Features
 
-```bash
-# create a new project in the current directory
-npx sv create
+- 🔐 **Secure Film Roll Storage** – Safely store and document your film rolls using Supabase's authentication and database, ensuring all your analog photography data is well-organized.
+- 📁 **Organized Gallery** – Easily manage and categorize your photos.
+- 🌐 **Desktop-Only Experience** – Designed exclusively for desktop use, providing the best possible experience for managing film rolls.
+- ⚡ **Fast & Lightweight** – Built with SvelteKit for high performance.
+- 📸 **Simple Uploads** – Drag and drop or select files to upload seamlessly.
 
-# create a new project in my-app
-npx sv create my-app
+## Tech Stack
+
+- **Frontend:** SvelteKit (Svelte, TypeScript)
+- **Backend:** Supabase (Auth, Storage, Database)
+- **Database:** PostgreSQL (via Supabase)
+- **Authentication:** Supabase Auth (both email and google login)
+
+## Installation
+
+Clone the repository:
+
+```sh
+git clone https://github.com/yourusername/fotovault.git
+cd fotovault
 ```
 
-## Developing
+Install dependencies:
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+```sh
+npm install
+```
 
-```bash
+Create a `.env` file and add your Supabase credentials:
+
+```sh
+PUBLIC_SUPABASE_URL="YOUR_SUPABASE_URL"
+PUBLIC_SUPABASE_ANON_KEY="YOUR_SUPABASE_KEY"
+PUBLIC_CF_TURNSTILE_SITE_KEY="YOUR_CF_TURNSTILE_SITE_KEY"
+```
+
+Run the development server:
+
+```sh
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+## Deployment
 
-To create a production version of your app:
+fotovault can be deployed on platforms like **Vercel**, **Netlify** or run locally.
 
-```bash
-npm run build
-```
+## Contributing
 
-You can preview the production build with `npm run preview`.
+Feel free to fork the repo and submit pull requests! Any contributions to improve security, performance, or features are welcome after review.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## License
+
+MIT License
