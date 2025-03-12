@@ -1,10 +1,10 @@
 # fotovault  
 
-![beta warning](https://img.shields.io/badge/status-beta-red)
-
 ![main](https://raw.githubusercontent.com/TOMIVERGARA/fotovault-web/refs/heads/dev/static/readme-main.png)
 
 Organize and document your analog film rolls with fotovault, a comprehensive tool for managing film formats, tracking development details, and keeping every shot, every roll, every note—all in one place. Built with **SvelteKit** and **Supabase**.
+
+> ![beta warning](https://img.shields.io/badge/status-beta-red) <br> fotovault is still in the early development stages and, being a personal project, i recommend you take precautions to protect your data.
 
 ## Features
 
