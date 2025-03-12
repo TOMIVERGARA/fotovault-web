@@ -60,7 +60,7 @@
 	{#each columns as column}
 		<div class="grid auto-rows-min gap-4">
 			{#each column as image}
-				<div class="w-full overflow-hidden rounded-lg border">
+				<div class="w-full overflow-hidden rounded-lg">
 					<ImageWithLoader src={image.url} alt={image.name} />
 				</div>
 			{/each}

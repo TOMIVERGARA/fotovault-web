@@ -10,16 +10,16 @@
 
 <div class="relative">
 	<!-- Skeleton loader -->
-	<div
-		class="absolute inset-0 animate-pulse bg-zinc-200 dark:!bg-secondary"
+	<!-- <div
+		class="absolute inset-0 h-20 animate-pulse bg-zinc-200 dark:!bg-secondary"
 		class:hidden={isLoaded}
-	></div>
+	></div> -->
 
 	<!-- Imagen -->
 	<img
 		{src}
 		{alt}
-		class="h-auto w-full object-contain opacity-0 transition-opacity duration-500"
+		class="h-auto w-full rounded-lg border object-contain opacity-0 transition-opacity duration-500"
 		on:load={handleLoad}
 		class:opacity-100={isLoaded}
 		loading="lazy"
